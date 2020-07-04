@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">WCE VISIT COVID19</string>
+    <string name="email_hint">Email ID</string>
+    <string name="password_hint">Password</string>
+    <string name="submit">Submit</string>
+    <string name="sign_in">Sign in</string>
+    <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
+    <string name="auth_failed">Authentication failed, check your credentials</string>
+</resources>
