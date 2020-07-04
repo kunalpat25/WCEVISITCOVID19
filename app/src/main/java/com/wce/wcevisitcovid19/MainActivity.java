@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 boolean loginStatus = checkUserLoginStatus(getApplicationContext());
-                if(!loginStatus) {
+                if(loginStatus) {
                     editor.clear();
                     editor.apply();
                     Toast.makeText(MainActivity.this, "You have been signed out successfully!", Toast.LENGTH_SHORT).show();
