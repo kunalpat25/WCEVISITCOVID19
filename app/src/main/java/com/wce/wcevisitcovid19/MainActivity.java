@@ -1,9 +1,11 @@
 package com.wce.wcevisitcovid19;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,17 +19,32 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.wce.wcevisitcovid19.models.Faculty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     EditText inputEmail;
     EditText inputPassword;
     Button signInBtn;
     Button logoutBtn;
     Button registerBtn;
     ProgressBar progressBar;
+    FirebaseDatabase firebaseDatabase;
+    private DatabaseReference facultyDatabaseReference;
+    Faculty faculty;
+    List<Faculty> facultyList = new ArrayList<>();
 
     private FirebaseAuth auth;
+    boolean isFaculty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +52,53 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         auth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        facultyDatabaseReference = firebaseDatabase.getReference("Faculty");
 
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if(checkUserLoginStatus(this))
+        {
+            facultyDatabaseReference.addValueEventListener(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        Faculty faculty = postSnapshot.getValue(Faculty.class);
+                        facultyList.add(faculty);
+                    }
+                    boolean flag = true;
+
+                    //checking user is a faculty or not
+                    for (int i = 0; i < facultyList.size(); i++) {
+                        Log.i(TAG, "onDataChange: Faculty Email: " + facultyList.get(i).getEmail());
+                        String facultyEmail = facultyList.get(i).getEmail();
+                        SharedPreferences preferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
+                        String emailID = preferences.getString("email", null);
+                        if (emailID.equalsIgnoreCase(facultyEmail)) {
+                            Log.i(TAG, "onDataChange: Entered Email: " + emailID);
+                            Log.i(TAG, "onDataChange: Now breaking loop..got faculty");
+                            Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                            startActivity(intent);
+                            flag = false;
+                            finish();
+                        }
+                    }
+                    //if not login student
+                    if(flag)
+                    {
+                        Intent intent = new Intent(MainActivity.this, StudentActivity.class);
+                        startActivity(intent);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("error", error.getMessage());
+                }
+            });
+        }
 
         inputEmail = findViewById(R.id.input_email);
         inputPassword = findViewById(R.id.input_password);
@@ -79,12 +140,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 boolean loginStatus = checkUserLoginStatus(getApplicationContext());
-                if(loginStatus) {
+                if (loginStatus) {
                     editor.clear();
                     editor.apply();
                     Toast.makeText(MainActivity.this, "You have been signed out successfully!", Toast.LENGTH_SHORT).show();
-                }
-                else
+                } else
                     Toast.makeText(MainActivity.this, "Please Sign in first!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -92,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 boolean loginStatus = checkUserLoginStatus(getApplicationContext());
                 if (loginStatus) {
 //                    Toast.makeText(MainActivity.this, "Already logged in..", Toast.LENGTH_SHORT).show();
@@ -126,9 +187,45 @@ public class MainActivity extends AppCompatActivity {
                                                 inputEmail.setText("");
                                                 inputPassword.setText("");
                                                 //Handle next Activity
-//                                            Intent intent = new Intent(MainActivity.this, NextActivity.class);
-//                                            startActivity(intent);
-//                                            finish();
+                                                setIsFaculty(false);
+                                                facultyDatabaseReference.addValueEventListener(new ValueEventListener() {
+
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                                            Faculty faculty = postSnapshot.getValue(Faculty.class);
+                                                            facultyList.add(faculty);
+                                                        }
+                                                        boolean flag = true;
+
+                                                        //checking user is a faculty or not
+                                                        for (int i = 0; i < facultyList.size(); i++) {
+                                                            Log.i(TAG, "onDataChange: Faculty Email: " + facultyList.get(i).getEmail());
+                                                            String facultyEmail = facultyList.get(i).getEmail();
+                                                            if (emailID.equalsIgnoreCase(facultyEmail)) {
+//                                                                setIsFaculty(true);
+                                                                Log.i(TAG, "onDataChange: Entered Email: " + emailID);
+                                                                Log.i(TAG, "onDataChange: Now breaking loop..got faculty");
+                                                                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                                                                startActivity(intent);
+                                                                flag = false;
+                                                                finish();
+                                                                break;
+                                                            }
+                                                        }
+                                                        //if not login student
+                                                        if(flag)
+                                                        {
+                                                            Intent intent = new Intent(MainActivity.this, StudentActivity.class);
+                                                            startActivity(intent);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                        Log.e("error", error.getMessage());
+                                                    }
+                                                });
                                             }
                                         }
                                     });
@@ -171,12 +268,19 @@ public class MainActivity extends AppCompatActivity {
         }
         if (status != null && status.equals("loggedIn")) {
             loginStatus = true;
-            Toast.makeText(MainActivity.this, "Already Signed in: " + email, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Already Signed in: " + email, Toast.LENGTH_SHORT).show();
         }
         return loginStatus;
     }
 
-
+    public void setIsFaculty(boolean status)
+    {
+        this.isFaculty = status;
+    }
+    public boolean getIsFaculty()
+    {
+        return this.isFaculty;
+    }
     @Override
     protected void onResume() {
         super.onResume();
