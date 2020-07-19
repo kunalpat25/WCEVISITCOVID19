@@ -74,9 +74,13 @@ public class SeniorCitizensList extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-
-                    String [] Birth_Date = ((String)postSnapshot.child("Birth date").getValue()).split("/");
-
+                    String[] Birth_Date=null;
+                    try {
+                        Birth_Date = ((String) postSnapshot.child("Birth date").getValue()).split("/");
+                    }
+                    catch(Exception e) {
+                        continue;
+                    }
                     LocalDate today=LocalDate.of(year,month,date);
                     LocalDate birth_date=LocalDate.of(Integer.parseInt(Birth_Date[2]),Integer.parseInt(Birth_Date[1]),Integer.parseInt(Birth_Date[0]));
 
@@ -100,9 +104,13 @@ public class SeniorCitizensList extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-
-                    String [] Birth_Date = ((String)postSnapshot.child("Birth date").getValue()).split("/");
-
+                    String[] Birth_Date=null;
+                    try {
+                        Birth_Date = ((String) postSnapshot.child("Birth date").getValue()).split("/");
+                    }
+                    catch(Exception e) {
+                        continue;
+                    }
                     LocalDate today=LocalDate.of(year,month,date);
                     LocalDate birth_date=LocalDate.of(Integer.parseInt(Birth_Date[2]),Integer.parseInt(Birth_Date[1]),Integer.parseInt(Birth_Date[0]));
 
@@ -126,8 +134,13 @@ public class SeniorCitizensList extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-
-                    String [] Birth_Date = ((String)postSnapshot.child("Birth date").getValue()).split("/");
+                    String[] Birth_Date=null;
+                    try {
+                        Birth_Date = ((String) postSnapshot.child("Birth date").getValue()).split("/");
+                    }
+                    catch(Exception e) {
+                        continue;
+                    }
 
                     LocalDate today=LocalDate.of(year,month,date);
                     LocalDate birth_date=LocalDate.of(Integer.parseInt(Birth_Date[2]),Integer.parseInt(Birth_Date[1]),Integer.parseInt(Birth_Date[0]));
