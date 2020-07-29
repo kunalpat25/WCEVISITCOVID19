@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,31 +21,37 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wce.wcevisitcovid19.adapters.SeniorCitizensListAdapter;
+import com.wce.wcevisitcovid19.adapters.UserListAdapter;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class SeniorCitizensList extends AppCompatActivity {
+public class SeniorCitizensListActivity extends AppCompatActivity {
+
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference dbRef_Faculty = database.getReference("Faculty");
     private DatabaseReference dbRef_Non_teaching = database.getReference("Non_teaching");
     private DatabaseReference dbRef_Outsiders = database.getReference("Outsiders");
     private static final String TAG = "SeniorCitizensList";
     ArrayList<String> seniorCitizensList = new ArrayList<>();
-    SeniorCitizensListAdapter seniorCitizensListAdapter;
+    ArrayList<String> userTypeList = new ArrayList<>();
+    UserListAdapter userListAdapter;
     Button logoutBtn;
+    ProgressBar progressBar;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_senior_citizens);
 
-        final ListView seniorCitizensListView = findViewById(R.id.seniorCitizensListView);
+        progressBar = findViewById(R.id.progressBar);
 
-        seniorCitizensListAdapter = new SeniorCitizensListAdapter(this,seniorCitizensList);
+        final ListView seniorCitizensListView = findViewById(R.id.seniorCitizensListView);
+        userListAdapter = new UserListAdapter(this,seniorCitizensList,userTypeList);
+        seniorCitizensListView.setAdapter(userListAdapter);
 
         logoutBtn = findViewById(R.id.btn_logout);
         logoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -56,12 +63,12 @@ public class SeniorCitizensList extends AppCompatActivity {
                 if (loginStatus) {
                     editor.clear();
                     editor.apply();
-                    Toast.makeText(SeniorCitizensList.this, "You have been signed out successfully!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SeniorCitizensList.this,MainActivity.class);
+                    Toast.makeText(SeniorCitizensListActivity.this, "You have been signed out successfully!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SeniorCitizensListActivity.this,MainActivity.class);
                     startActivity(intent);
                     finish();
                 } else
-                    Toast.makeText(SeniorCitizensList.this, "Please Sign in first!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SeniorCitizensListActivity.this, "Please Sign in first!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -74,11 +81,12 @@ public class SeniorCitizensList extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String[] Birth_Date=null;
+                    String[] Birth_Date;
                     try {
                         Birth_Date = ((String) postSnapshot.child("Birth date").getValue()).split("/");
                     }
                     catch(Exception e) {
+                        e.printStackTrace();
                         continue;
                     }
                     LocalDate today=LocalDate.of(year,month,date);
@@ -87,9 +95,12 @@ public class SeniorCitizensList extends AppCompatActivity {
                     int age= Period.between(birth_date,today).getYears();
 
                     if(age>=65) {
-                        seniorCitizensList.add(postSnapshot.getKey());
+                        String facultyName = postSnapshot.getKey();
+//                        String displayName = facultyName + " (\\033[3mFaculty\\033[0m)";
+                        seniorCitizensList.add(facultyName);
+                        userTypeList.add("Faculty");
+                        userListAdapter.notifyDataSetChanged();
                     }
-                    seniorCitizensListView.setAdapter(seniorCitizensListAdapter);
                 }
             }
 
@@ -109,6 +120,7 @@ public class SeniorCitizensList extends AppCompatActivity {
                         Birth_Date = ((String) postSnapshot.child("Birth date").getValue()).split("/");
                     }
                     catch(Exception e) {
+                        e.printStackTrace();
                         continue;
                     }
                     LocalDate today=LocalDate.of(year,month,date);
@@ -117,9 +129,12 @@ public class SeniorCitizensList extends AppCompatActivity {
                     int age= Period.between(birth_date,today).getYears();
 
                     if(age>=65) {
-                        seniorCitizensList.add(postSnapshot.getKey());
+                        String nonTeachingStaffName = postSnapshot.getKey();
+//                        String displayName = nonTeachingStaffName + " (\\033[3mNon-Teaching Staff\\033[0m)";
+                        seniorCitizensList.add(nonTeachingStaffName);
+                        userTypeList.add("Non_teaching");
+                        userListAdapter.notifyDataSetChanged();
                     }
-                    seniorCitizensListView.setAdapter(seniorCitizensListAdapter);
                 }
             }
 
@@ -139,6 +154,7 @@ public class SeniorCitizensList extends AppCompatActivity {
                         Birth_Date = ((String) postSnapshot.child("Birth date").getValue()).split("/");
                     }
                     catch(Exception e) {
+                        e.printStackTrace();
                         continue;
                     }
 
@@ -148,9 +164,13 @@ public class SeniorCitizensList extends AppCompatActivity {
                     int age= Period.between(birth_date,today).getYears();
 
                     if(age>=65) {
-                        seniorCitizensList.add(postSnapshot.getKey());
+                        String outsiderName = postSnapshot.getKey();
+//                        String displayName = outsiderName + " (\\033[3mVisitor\\033[0m)";
+                        seniorCitizensList.add(outsiderName);
+                        userTypeList.add("Outsiders");
+                        userListAdapter.notifyDataSetChanged();
+
                     }
-                    seniorCitizensListView.setAdapter(seniorCitizensListAdapter);
                 }
             }
 
@@ -159,5 +179,22 @@ public class SeniorCitizensList extends AppCompatActivity {
                 Log.e("error", error.getMessage());
             }
         });
+
+        progressBar.setVisibility(View.GONE);
+
+        seniorCitizensListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String userName = seniorCitizensList.get(position);
+                String userType = userTypeList.get(position);
+                Intent intent = new Intent(SeniorCitizensListActivity.this,UserDetailsActivity.class);
+                intent.putExtra("userName",userName);
+                intent.putExtra("userType",userType);
+                startActivity(intent);
+            }
+        });
+
+        userListAdapter.clear();
+        seniorCitizensList.clear();
     }
 }

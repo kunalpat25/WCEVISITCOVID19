@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SymptomaticStudentsListActivity"
+    tools:context=".SymptomaticUsersListActivity"
     android:padding="16dp"
     android:orientation="vertical">
 
@@ -13,15 +13,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Symptom"
+        android:text="@string/symptoms"
         android:textSize="24sp"
+        android:layout_centerHorizontal="true"
         />
 
     <ListView
-        android:id="@+id/students_list_view"
+        android:id="@+id/symptomatic_users_list_view"
         android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"/>
+        android:padding="8dp"
+        android:layout_below="@+id/symptomTextView"/>
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        />
+</RelativeLayout>

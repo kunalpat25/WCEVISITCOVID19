@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -24,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+import com.wce.wcevisitcovid19.models.Admin;
 import com.wce.wcevisitcovid19.models.Faculty;
 
 import java.util.ArrayList;
@@ -39,9 +42,12 @@ public class MainActivity extends AppCompatActivity {
     Button registerBtn;
     ProgressBar progressBar;
     FirebaseDatabase firebaseDatabase;
-    private DatabaseReference facultyDatabaseReference;
-    Faculty faculty;
-    List<Faculty> facultyList = new ArrayList<>();
+//    private DatabaseReference facultyDatabaseReference;
+    private DatabaseReference adminDatabaseReference;
+    Admin admin;
+//    Faculty faculty;
+//    List<Faculty> facultyList = new ArrayList<>();
+    List<Admin> adminList = new ArrayList<>();
 
     private FirebaseAuth auth;
     boolean isFaculty;
@@ -50,36 +56,38 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
         auth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        facultyDatabaseReference = firebaseDatabase.getReference("Faculty");
+
+        adminDatabaseReference = firebaseDatabase.getReference("Admin");
 
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 
         if(checkUserLoginStatus(this))
         {
-            facultyDatabaseReference.addValueEventListener(new ValueEventListener() {
-
+            adminDatabaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        Faculty faculty = postSnapshot.getValue(Faculty.class);
-                        facultyList.add(faculty);
+                        Admin admin = postSnapshot.getValue(Admin.class);
+                        adminList.add(admin);
                     }
                     boolean flag = true;
 
-                    //checking user is a faculty or not
-                    for (int i = 0; i < facultyList.size(); i++) {
-                        Log.i(TAG, "onDataChange: Faculty Email: " + facultyList.get(i).getEmail());
-                        String facultyEmail = facultyList.get(i).getEmail();
+                    //checking user is an admin or not
+                    for (int i = 0; i < adminList.size(); i++) {
+                        Log.i(TAG, "onDataChange: Admin Email: " + adminList.get(i).getEmail());
+                        String adminEmail = adminList.get(i).getEmail();
                         SharedPreferences preferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
                         String emailID = preferences.getString("email", null);
-                        if (emailID.equalsIgnoreCase(facultyEmail)) {
+                        if (emailID.equalsIgnoreCase(adminEmail)) {
                             Log.i(TAG, "onDataChange: Entered Email: " + emailID);
-                            Log.i(TAG, "onDataChange: Now breaking loop..got faculty");
+                            Log.i(TAG, "onDataChange: Now breaking loop..got admin");
                             Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                            progressBar.setVisibility(View.GONE);
                             startActivity(intent);
                             flag = false;
                             finish();
@@ -89,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     if(flag)
                     {
                         Intent intent = new Intent(MainActivity.this, StudentActivity.class);
+                        progressBar.setVisibility(View.GONE);
                         startActivity(intent);
                     }
                 }
@@ -99,13 +108,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+        else
+            progressBar.setVisibility(View.GONE);
+
 
         inputEmail = findViewById(R.id.input_email);
         inputPassword = findViewById(R.id.input_password);
         signInBtn = findViewById(R.id.btn_login);
         logoutBtn = findViewById(R.id.btn_logout);
         registerBtn = findViewById(R.id.btn_register);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 //                    Toast.makeText(MainActivity.this, "Already logged in..", Toast.LENGTH_SHORT).show();
                 } else {
                     if (validateCredentials()) {
-                        progressBar.setVisibility(View.INVISIBLE);
+                        progressBar.setVisibility(View.VISIBLE);
                         final String emailID = inputEmail.getText().toString();
                         final String password = inputPassword.getText().toString();
                         try {
@@ -169,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                                             // If sign in fails, display a message to the user. If sign in succeeds
                                             // the auth state listener will be notified and logic to handle the
                                             // signed in user can be handled in the listener.
-                                            progressBar.setVisibility(View.GONE);
+
                                             if (!task.isSuccessful()) {
                                                 // there was an error
                                                 if (password.length() < 6) {
@@ -182,30 +193,30 @@ public class MainActivity extends AppCompatActivity {
                                                 editor.putString("loginStatus", "loggedIn");
                                                 editor.putString("email", emailID);
                                                 editor.apply();
-                                                //For demo purpose
+                                                //For testing purpose
+                                                progressBar.setVisibility(View.GONE);
                                                 Toast.makeText(MainActivity.this, "Signed In successfully!", Toast.LENGTH_SHORT).show();
                                                 inputEmail.setText("");
                                                 inputPassword.setText("");
                                                 //Handle next Activity
                                                 setIsFaculty(false);
-                                                facultyDatabaseReference.addValueEventListener(new ValueEventListener() {
-
+                                                adminDatabaseReference.addValueEventListener(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                                            Faculty faculty = postSnapshot.getValue(Faculty.class);
-                                                            facultyList.add(faculty);
+                                                            Admin admin = postSnapshot.getValue(Admin.class);
+                                                            adminList.add(admin);
                                                         }
                                                         boolean flag = true;
 
                                                         //checking user is a faculty or not
-                                                        for (int i = 0; i < facultyList.size(); i++) {
-                                                            Log.i(TAG, "onDataChange: Faculty Email: " + facultyList.get(i).getEmail());
-                                                            String facultyEmail = facultyList.get(i).getEmail();
-                                                            if (emailID.equalsIgnoreCase(facultyEmail)) {
+                                                        for (int i = 0; i < adminList.size(); i++) {
+                                                            Log.i(TAG, "onDataChange: Faculty Email: " + adminList.get(i).getEmail());
+                                                            String adminEmail = adminList.get(i).getEmail();
+                                                            if (emailID.equalsIgnoreCase(adminEmail)) {
 //                                                                setIsFaculty(true);
                                                                 Log.i(TAG, "onDataChange: Entered Email: " + emailID);
-                                                                Log.i(TAG, "onDataChange: Now breaking loop..got faculty");
+                                                                Log.i(TAG, "onDataChange: Now breaking loop..got admin");
                                                                 Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                                                                 startActivity(intent);
                                                                 flag = false;
@@ -284,6 +295,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        progressBar.setVisibility(View.GONE);
+//        progressBar.setVisibility(View.GONE);
     }
 }

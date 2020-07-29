@@ -7,4 +7,38 @@
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
     <string name="auth_failed">Authentication failed, check your credentials</string>
     <string name="today_status">Today\'s Status</string>
+    <string name="symptoms">Symptoms</string>
+    <string name="district_wise_list">District wise list</string>
+    <string name="state_wise_list">State wise list</string>
+    <string name="senior_citizens">Senior Citizens</string>
+    <string name="quarantine_stamped">Quarantine Stamped</string>
+    <string name="travelled_from_containment_zone">Travelled from containment zone</string>
+    <string name="group_more_than_five">Group more than 5</string>
+    <string name="without_mask">Without mask</string>
+    <string name="violating_covid19_guidelines">Violating COVID19 Guidelines</string>
+    <string name="logout">Logout</string>
+    <string name="districts">Districts</string>
+    <string name="states">States</string>
+    <string name="users">Users</string>
+    <string name="contact">Contact :</string>
+    <string name="district">District :</string>
+    <string name="state">"State : "</string>
+    <string name="prn">"PRN : "</string>
+    <string name="class_title">"Class : "</string>
+    <string name="address">"Address : "</string>
+    <string name="birth_date">"Birth date : "</string>
+    <string name="department">"Department : "</string>
+    <string name="email_id">"Email ID : "</string>
+    <string name="quarantined">"Quarantined in Lockdown : "</string>
+    <string name="age">"Age : "</string>
+    <string name="loc_of_visit">"Location of visit : "</string>
+    <string name="purpose_of_visit">"Purpose of visit : "</string>
+    <string name="visit_date">"Visit date : "</string>
+    <string name="quarantine_period">"Quarantine period : "</string>
+    <string name="title_location_permission">Access location</string>
+    <string name="text_location_permission">Permission for accessing location is needed</string>
+    <string name="ok">OK</string>
+    <string name="current_location">"Current Location : "</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false"></string>
+
 </resources>

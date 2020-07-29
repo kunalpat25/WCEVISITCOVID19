@@ -1,4 +1,4 @@
-package com.wce.wcevisitcovid19;
+package com.wce.wcevisitcovid19.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -14,6 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.wce.wcevisitcovid19.R;
+
 import java.util.ArrayList;
 
 public class SymptomsListAdapter extends ArrayAdapter<String> {
@@ -23,7 +25,7 @@ public class SymptomsListAdapter extends ArrayAdapter<String> {
     private static final String TAG = "SymptomsListAdapter";
 
     public SymptomsListAdapter(Activity context, ArrayList<String> symptoms){
-        super(context,R.layout.simple_list_item,symptoms);
+        super(context, R.layout.simple_list_item,symptoms);
         this.context = context;
         this.symptoms = symptoms;
 

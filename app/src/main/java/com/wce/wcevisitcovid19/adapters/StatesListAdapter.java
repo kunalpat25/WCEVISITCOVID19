@@ -1,4 +1,4 @@
-package com.wce.wcevisitcovid19;
+package com.wce.wcevisitcovid19.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -12,17 +12,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.wce.wcevisitcovid19.R;
+
 import java.util.ArrayList;
 
-public class SymptomaticStudentListAdapter  extends ArrayAdapter<String> {
+public class StatesListAdapter extends ArrayAdapter<String> {
     private final Activity context;
-    ArrayList<String> students=new ArrayList<>();
-    private static final String TAG = "SymptomsListAdapter";
+    ArrayList<String> states = new ArrayList<>();
+    private static final String TAG = "StatesListAdapter";
 
-    public SymptomaticStudentListAdapter(Activity context, ArrayList<String> students){
-        super(context,R.layout.simple_list_item,students);
+    public StatesListAdapter(Activity context, ArrayList<String> states)
+    {
+        super(context, R.layout.simple_list_item,states);
         this.context = context;
-        this.students = students;
+        this.states = states;
     }
 
     @NonNull
@@ -30,10 +33,10 @@ public class SymptomaticStudentListAdapter  extends ArrayAdapter<String> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater=context.getLayoutInflater();
         @SuppressLint("ViewHolder") View rowView=inflater.inflate(R.layout.simple_list_item,null,true);
-        TextView studentTextView=(TextView) rowView.findViewById(R.id.list_item_text_view);
+        TextView stateTextView=(TextView) rowView.findViewById(R.id.list_item_text_view);
 
-        studentTextView.setText(students.get(position));
-        Log.i(TAG, "getView: Student: "+students.get(position));
+        stateTextView.setText(states.get(position));
+        Log.i(TAG, "getView: State: "+states.get(position));
         return rowView;
     }
 }
