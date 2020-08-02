@@ -80,7 +80,6 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
 //                                    }
 //                                }
                                 String studentName = snapshot.child("Name").getValue(String.class);
-//                                String displayName = studentName + " (\\033[3mStudent\\033[0m)";
                                 usersList.add(studentName);
                                 userTypeList.add("Students");
                                 Log.i(TAG, "onDataChange: Student having symptom: " + studentName);
@@ -117,11 +116,9 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                     String status = postSnapshot.getValue(String.class);
 
                     if(status.equals("Yes")) {
-//                        String displayName = facultyName + " (\\033[3mFaculty\\033[0m)";
                         usersList.add(facultyName);
                         userTypeList.add("Faculty");
                         Log.i(TAG, "onDataChange: Faculty having symptom: " + facultyName);
-//                        simpleListAdapter.clear();
                         userListAdapter.notifyDataSetChanged();
                     }
                 }
