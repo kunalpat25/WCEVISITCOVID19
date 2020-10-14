@@ -44,7 +44,7 @@ public class UserListAdapter extends ArrayAdapter<String> {
 
         userNameTextView.setText(userNames.get(position));
         userTypeTextView.setText(userTypes.get(position));
-        String userType = userTypes.get(position);
+        /*String userType = userTypes.get(position);
         switch (userType)
         {
             case "Students":
@@ -62,7 +62,7 @@ public class UserListAdapter extends ArrayAdapter<String> {
             case "Outsiders":
                 listLayout.setBackgroundColor(Color.parseColor("#ED7777"));
                 break;
-        }
+        }*/
 
         Log.i(TAG, "getView: Username: "+userNames.get(position));
         Log.i(TAG, "getView: Usertype: "+userTypes.get(position));

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +43,9 @@ public class StatesListActivity extends AppCompatActivity {
         stateListView = findViewById(R.id.states_list_view);
         statesListAdapter = new StatesListAdapter(this, statesList);
         stateListView.setAdapter(statesListAdapter);
+
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("UserName");
 
         //fetching states
         DatabaseReference stateDatabaseReference = dbRef;

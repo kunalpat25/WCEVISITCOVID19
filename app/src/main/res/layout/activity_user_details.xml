@@ -8,6 +8,7 @@
     android:padding="16dp"
     android:orientation="vertical">
 
+
     <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
@@ -173,7 +174,6 @@
             android:layout_height="30dp"
             android:layout_marginStart="20dp"
             android:src="@drawable/ic_call"/>
-
 
     </LinearLayout>
 

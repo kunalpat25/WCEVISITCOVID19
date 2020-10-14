@@ -31,6 +31,7 @@ public class StateUsersActivity extends AppCompatActivity {
 
     ArrayList<String> usersList = new ArrayList<>();
     ArrayList<String> userTypeList = new ArrayList<>();
+    ArrayList<String> userIdList = new ArrayList<>();
     private static final String TAG = "StateUsersActivity";
     UserListAdapter userListAdapter;
     ListView stateUsersListView;
@@ -60,17 +61,17 @@ public class StateUsersActivity extends AppCompatActivity {
                 for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
                     String studentName ;
                     try {
-                        studentName =(String)studentSnapshot.child("Name").getValue();
+                        studentName = studentSnapshot.child("Name").getValue(String.class);
                     } catch (NullPointerException e) {
-                        studentName = studentSnapshot.getKey();
+                        studentName = "";
                         e.printStackTrace();
                     }
                     String state = studentSnapshot.child("State").getValue(String.class);
-
-                    if(state.equals(stateName)) {
-//                        String displayName = studentName + " (\\033[3mStudent\\033[0m)";
+                    String studentId = studentSnapshot.getKey();
+                    if(stateName.equals(state)) {
                         usersList.add(studentName);
                         userTypeList.add("Students");
+                        userIdList.add(studentId);
                         Log.i(TAG, "onDataChange: Student in state: " +state +":"+ studentName);
                         userListAdapter.notifyDataSetChanged();
                     }
@@ -90,7 +91,7 @@ public class StateUsersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot facultySnapshot : dataSnapshot.getChildren()) {
-                    String facultyName = null;
+                    String facultyName = "";
                     try {
                         facultyName = facultySnapshot.child("Name").getValue(String.class);
                     } catch (NullPointerException e) {
@@ -100,7 +101,8 @@ public class StateUsersActivity extends AppCompatActivity {
                     String state = facultySnapshot.child("State").getValue(String.class);
 
                     if(state.equals(stateName)) {
-//                        String displayName = facultyName + " (\\033[3mFaculty\\033[0m)";
+                        String facultyId = facultySnapshot.getKey();
+                        userIdList.add(facultyId);
                         usersList.add(facultyName);
                         userTypeList.add("Faculty");
                         Log.i(TAG, "onDataChange: Faculty in state " +state +":"+ facultyName);
@@ -143,7 +145,8 @@ public class StateUsersActivity extends AppCompatActivity {
 
 
                     if(state.equals(stateName)) {
-//                        String displayName = nonTeachingStaffName + " (\\033[3mNon-Teaching Staff\\033[0m)";
+                        String nonTeachingStaffId = nonTeachingSnapshot.getKey();
+                        userIdList.add(nonTeachingStaffId);
                         usersList.add(nonTeachingStaffName);
                         userTypeList.add("Non_teaching");
                         Log.i(TAG, "onDataChange: Non-teaching staff in state: " +state +":"+ nonTeachingStaffName);
@@ -187,7 +190,8 @@ public class StateUsersActivity extends AppCompatActivity {
 
 
                     if(state.equals(stateName)) {
-//                        String displayName = outsiderName + " (\\033[3mVisitor\\033[0m)";
+                        String outsiderId = outsiderSnapshot.getKey();
+                        userIdList.add(outsiderId);
                         usersList.add(outsiderName);
                         userTypeList.add("Outsiders");
                         Log.i(TAG, "onDataChange: Outsider in state " +state +":"+ outsiderName);
@@ -209,9 +213,11 @@ public class StateUsersActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String userName = usersList.get(position);
                 String userType = userTypeList.get(position);
+                String userId = userIdList.get(position);
                 Intent intent = new Intent(StateUsersActivity.this,UserDetailsActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("userType",userType);
+                intent.putExtra("userId",userId);
                 startActivity(intent);
             }
         });

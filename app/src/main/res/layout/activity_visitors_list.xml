@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".VisitorsListActivity">
+
+    <LinearLayout
+        android:id="@+id/choose_date_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        >
+        <TextView
+            android:id="@+id/date_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:textSize="18sp"/>
+        <EditText
+            android:id="@+id/edit_visit_date"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:focusable="false"
+            android:layout_gravity="center"
+            android:inputType="date"
+            android:longClickable="false"
+            android:layout_marginStart="6dp"
+            />
+
+        <TextView
+            android:id="@+id/count_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/count"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/display_count_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="18sp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/visitors"
+        android:textSize="24sp"
+        android:layout_gravity="center"
+        android:layout_below="@+id/choose_date_layout"
+        android:layout_centerHorizontal="true"/>
+
+    <View
+        android:id="@+id/v1"
+        android:layout_below="@+id/tv1"
+        android:layout_width="100dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/black"/>
+
+    <ListView
+        android:id="@+id/visitorsListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/v1"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/visitor_info_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="@string/no_visitor"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+</RelativeLayout>

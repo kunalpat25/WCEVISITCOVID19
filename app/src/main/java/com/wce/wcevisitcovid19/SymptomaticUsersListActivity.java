@@ -29,6 +29,7 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
     ListView usersListView;
     ArrayList<String> usersList = new ArrayList<>();
     ArrayList<String> userTypeList = new ArrayList<>();
+    ArrayList<String> userIdList = new ArrayList<>();
     private static final String TAG = "SymptomaticStudentsList";
     UserListAdapter userListAdapter;
     ProgressBar progressBar ;
@@ -112,14 +113,38 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String facultyName = postSnapshot.getKey();
+                    String empId = postSnapshot.getKey();
+//                    String facultyName = postSnapshot.child("");
                     String status = postSnapshot.getValue(String.class);
 
                     if(status.equals("Yes")) {
-                        usersList.add(facultyName);
-                        userTypeList.add("Faculty");
-                        Log.i(TAG, "onDataChange: Faculty having symptom: " + facultyName);
-                        userListAdapter.notifyDataSetChanged();
+                        DatabaseReference facultyDatabaseReference = database.getReference("Faculty").child(empId);
+                        facultyDatabaseReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                for(DataSnapshot studentSnapshot: snapshot.getChildren())
+//                                {
+//                                    if(studentSnapshot.child("PRN").getValue(String.class).equals(studentPRN)) {
+//                                        String studentName = studentSnapshot.child(studentPRN).child("Name").getValue(String.class);
+//                                        usersList.add(studentName);
+//                                        userTypeList.add("Students");
+//                                        Log.i(TAG, "onDataChange: Student having symptom: " + studentName);
+//                                        simpleListAdapter.notifyDataSetChanged();
+//                                    }
+//                                }
+                                String facultyName = snapshot.child("Name").getValue(String.class);
+                                usersList.add(facultyName);
+                                userTypeList.add("Faculty");
+                                Log.i(TAG, "onDataChange: Faculty having symptom: " + facultyName);
+                                userListAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("error", error.getMessage());
+                            }
+                        });
+
                     }
                 }
             }
@@ -137,16 +162,39 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String nonTeachingStaffName = postSnapshot.getKey();
+                    String empId = postSnapshot.getKey();
                     String status = postSnapshot.getValue(String.class);
 
                     if(status.equals("Yes")) {
+                        DatabaseReference nonTeachingDatabaseReference = database.getReference("Non_teaching").child(empId);
+                        nonTeachingDatabaseReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                for(DataSnapshot studentSnapshot: snapshot.getChildren())
+//                                {
+//                                    if(studentSnapshot.child("PRN").getValue(String.class).equals(studentPRN)) {
+//                                        String studentName = studentSnapshot.child(studentPRN).child("Name").getValue(String.class);
+//                                        usersList.add(studentName);
+//                                        userTypeList.add("Students");
+//                                        Log.i(TAG, "onDataChange: Student having symptom: " + studentName);
+//                                        simpleListAdapter.notifyDataSetChanged();
+//                                    }
+//                                }
+                                String nonTeachingStaffName = snapshot.child("Name").getValue(String.class);
+                                usersList.add(nonTeachingStaffName);
+                                userTypeList.add("Non_teaching");
+                                Log.i(TAG, "onDataChange: Non Teaching Staff having symptom: " + nonTeachingStaffName);
+
+                                userListAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("error", error.getMessage());
+                            }
+                        });
 //                        String displayName = nonTeachingStaffName + " (\\033[3mNon-Teaching Staff\\033[0m)";
-                        usersList.add(nonTeachingStaffName);
-                        userTypeList.add("Non_teaching");
-                        Log.i(TAG, "onDataChange: Non Teaching Staff having symptom: " + nonTeachingStaffName);
-//                        simpleListAdapter.clear();
-                        userListAdapter.notifyDataSetChanged();
+
                     }
                 }
             }
@@ -164,15 +212,37 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String outsiderName = postSnapshot.getKey();
+                    String visitorId = postSnapshot.getKey();
                     String status = postSnapshot.getValue(String.class);
 
                     if(status.equals("Yes")) {
-//                        String displayName = outsiderName + " (\\033[3mVisitor\\033[0m)";
-                        usersList.add(outsiderName);
-                        userTypeList.add("Outsiders");
-                        Log.i(TAG, "onDataChange: Outsider having symptom: " + outsiderName);
-                        userListAdapter.notifyDataSetChanged();
+                        DatabaseReference outsiderDatabaseReference = database.getReference("Outsiders").child(visitorId);
+                        outsiderDatabaseReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                for(DataSnapshot studentSnapshot: snapshot.getChildren())
+//                                {
+//                                    if(studentSnapshot.child("PRN").getValue(String.class).equals(studentPRN)) {
+//                                        String studentName = studentSnapshot.child(studentPRN).child("Name").getValue(String.class);
+//                                        usersList.add(studentName);
+//                                        userTypeList.add("Students");
+//                                        Log.i(TAG, "onDataChange: Student having symptom: " + studentName);
+//                                        simpleListAdapter.notifyDataSetChanged();
+//                                    }
+//                                }
+                                String outsiderName = snapshot.child("Name").getValue(String.class);
+                                usersList.add(outsiderName);
+                                userTypeList.add("Outsiders");
+                                Log.i(TAG, "onDataChange: Outsider having symptom: " + outsiderName);
+                                userListAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("error", error.getMessage());
+                            }
+                        });
+
                     }
                 }
             }

@@ -30,6 +30,7 @@ public class DistrictUsersActivity extends AppCompatActivity {
 
     ArrayList<String> usersList = new ArrayList<>();
     ArrayList<String> userTypeList = new ArrayList<>();
+    ArrayList<String> userIdList = new ArrayList<>();
     private static final String TAG = "DistrictUsersActivity";
     UserListAdapter userListAdapter;
     ListView districtUsersListView;
@@ -49,6 +50,7 @@ public class DistrictUsersActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         final String districtName = intent.getStringExtra("district");
+        Log.i(TAG, "onCreate: districtName from intent: "+districtName);
         districtTextView.setText(districtName);
 
         //fetching students
@@ -58,7 +60,7 @@ public class DistrictUsersActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
 
-                    String studentName;
+                    String studentName,studentId;
                     try {
                         Log.i(TAG, "onDataChange: StudentName: "+studentSnapshot.child("Name").getValue(String.class));
                         studentName = studentSnapshot.child("Name").getValue(String.class);
@@ -66,18 +68,19 @@ public class DistrictUsersActivity extends AppCompatActivity {
                         studentName = studentSnapshot.getKey();
                         e.printStackTrace();
                     }
-                    String district;
+                    String district="default";
                     try {
                         district = studentSnapshot.child("District").getValue(String.class);
                     } catch (NullPointerException e) {
                         e.printStackTrace();
+                        Log.e(TAG, "onDataChange: district: "+ district,e );
                         continue;
                     }
-
-                    if(district.equalsIgnoreCase(districtName)) {
-//                        String displayName = studentName + " (\\033[3mStudent\\033[0m)";
+                    studentId = studentSnapshot.getKey();
+                    if(districtName.equals(district)) {
                         usersList.add(studentName);
                         userTypeList.add("Students");
+                        userIdList.add(studentId);
                         Log.i(TAG, "onDataChange: Student in district: " +district +":"+ studentName);
                         userListAdapter.notifyDataSetChanged();
                     }
@@ -97,7 +100,7 @@ public class DistrictUsersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot facultySnapshot : dataSnapshot.getChildren()) {
-                    String facultyName;
+                    String facultyName,facultyId;
                     try {
                         Log.i(TAG, "onDataChange: FacultyName: "+facultySnapshot.child("Name").getValue(String.class));
 
@@ -107,11 +110,12 @@ public class DistrictUsersActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     String district = facultySnapshot.child("District").getValue(String.class);
-
+                    facultyId = facultySnapshot.getKey();
                     if(district.equalsIgnoreCase(districtName)) {
 //                        String displayName = facultyName + " (\\033[3mFaculty\\033[0m)";
                         usersList.add(facultyName);
                         userTypeList.add("Faculty");
+                        userIdList.add(facultyId);
                         Log.i(TAG, "onDataChange: Faculty in district: " +district +":"+ facultyName);
 //                        simpleListAdapter.clear();
                         userListAdapter.notifyDataSetChanged();
@@ -132,7 +136,7 @@ public class DistrictUsersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot nonTeachingSnapshot : dataSnapshot.getChildren()) {
-                    String nonTeachingStaffName;
+                    String nonTeachingStaffName,nonTeachingStaffId;
                     try {
                         Log.i(TAG, "onDataChange: NonteachingstaffName: "+nonTeachingSnapshot.child("Name").getValue(String.class));
 
@@ -152,11 +156,12 @@ public class DistrictUsersActivity extends AppCompatActivity {
                         continue;
                     }
 
-
+                    nonTeachingStaffId = nonTeachingSnapshot.getKey();
                     if(district.equals(districtName)) {
 //                        String displayName = nonTeachingStaffName + " (\\033[3mNon-Teaching Staff\\033[0m)";
                         usersList.add(nonTeachingStaffName);
                         userTypeList.add("Non_teaching");
+                        userIdList.add(nonTeachingStaffId);
                         Log.i(TAG, "onDataChange: Non-teaching staff in district: " +district +":"+ nonTeachingStaffName);
 //                        simpleListAdapter.clear();
                         userListAdapter.notifyDataSetChanged();
@@ -177,35 +182,40 @@ public class DistrictUsersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot outsiderSnapshot : dataSnapshot.getChildren()) {
-                    String outsiderName;
-                    try {
-                        Log.i(TAG, "onDataChange: OutsiderName: "+outsiderSnapshot.child("Name").getValue(String.class));
-
-                        outsiderName = outsiderSnapshot.child("Name").getValue(String.class);
+                    String outsiderName,district="",outsiderId;
+                    try
+                    {
+                        district = outsiderSnapshot.child("District").getValue(String.class);
                     }
                     catch (NullPointerException e)
                     {
-                        Log.i(TAG, "onDataChange: OutsiderName: "+outsiderSnapshot.getKey());
-                        outsiderName = outsiderSnapshot.getKey();
-                    }
-                    String district;
-                    try {
-                        district = outsiderSnapshot.child("District").getValue(String.class);
-                    }
-                    catch (Exception e)
-                    {
+                        district="";
                         e.printStackTrace();
                         continue;
                     }
 
-
-                    if(district.equals(districtName)) {
-//                        String displayName = outsiderName + " (\\033[3mVisitor\\033[0m)";
+                    if(districtName.equals(district)) {
+                        outsiderName = outsiderSnapshot.child("Name").getValue(String.class);
+                        outsiderId = outsiderSnapshot.getKey();
                         usersList.add(outsiderName);
                         userTypeList.add("Outsiders");
+                        userIdList.add(outsiderId);
                         Log.i(TAG, "onDataChange: Outsider in district " +district +":"+ outsiderName);
                         userListAdapter.notifyDataSetChanged();
                     }
+//                    try {
+//                        Log.i(TAG, "onDataChange: OutsiderName: "+outsiderSnapshot.child("Name").getValue(String.class));
+//                        outsiderName = outsiderSnapshot.child("Name").getValue(String.class);
+//                    }
+//                    catch (NullPointerException e)
+//                    {
+//                        Log.i(TAG, "onDataChange: OutsiderName: "+outsiderSnapshot.getKey());
+//                        outsiderName = outsiderSnapshot.getKey();
+//                    }
+
+
+
+
                 }
             }
 
@@ -222,12 +232,14 @@ public class DistrictUsersActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String userName = usersList.get(position);
                 String userType = userTypeList.get(position);
+                String userId = userIdList.get(position);
                 Intent intent = new Intent(DistrictUsersActivity.this,UserDetailsActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("userType",userType);
+                intent.putExtra("userId",userId);
                 startActivity(intent);
             }
-        });
+        }  );
 
         userListAdapter.clear();
         usersList.clear();

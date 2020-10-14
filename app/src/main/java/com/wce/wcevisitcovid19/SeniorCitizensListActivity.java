@@ -38,6 +38,7 @@ public class SeniorCitizensListActivity extends AppCompatActivity {
     private static final String TAG = "SeniorCitizensList";
     ArrayList<String> seniorCitizensList = new ArrayList<>();
     ArrayList<String> userTypeList = new ArrayList<>();
+    ArrayList<String> userIdList = new ArrayList<>();
     UserListAdapter userListAdapter;
     Button logoutBtn;
     ProgressBar progressBar;
@@ -96,7 +97,8 @@ public class SeniorCitizensListActivity extends AppCompatActivity {
 
                     if(age>=65) {
                         String facultyName = postSnapshot.getKey();
-//                        String displayName = facultyName + " (\\033[3mFaculty\\033[0m)";
+                        String facultyId = postSnapshot.getKey();
+                        userIdList.add(facultyId);
                         seniorCitizensList.add(facultyName);
                         userTypeList.add("Faculty");
                         userListAdapter.notifyDataSetChanged();
@@ -130,7 +132,7 @@ public class SeniorCitizensListActivity extends AppCompatActivity {
 
                     if(age>=65) {
                         String nonTeachingStaffName = postSnapshot.getKey();
-//                        String displayName = nonTeachingStaffName + " (\\033[3mNon-Teaching Staff\\033[0m)";
+
                         seniorCitizensList.add(nonTeachingStaffName);
                         userTypeList.add("Non_teaching");
                         userListAdapter.notifyDataSetChanged();

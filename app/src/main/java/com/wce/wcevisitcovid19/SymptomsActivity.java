@@ -64,7 +64,7 @@ public class SymptomsActivity extends AppCompatActivity {
             }
         });
 
-        final int year = Calendar.getInstance().get(Calendar.YEAR);
+       /* final int year = Calendar.getInstance().get(Calendar.YEAR);
         String month = String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
         month = String.valueOf(Integer.parseInt(month) + 1);
         String date = String.valueOf(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
@@ -74,6 +74,12 @@ public class SymptomsActivity extends AppCompatActivity {
 
         if(date.length() == 1)
             date ="0"+ date;
+
+ */
+       Intent intent = getIntent();
+       final String year = intent.getStringExtra("year");
+       String month = intent.getStringExtra("month");
+       String date = intent.getStringExtra("date");
 
         final String finalmonth = String.valueOf(month);
         final String finaldate  = String.valueOf(date);

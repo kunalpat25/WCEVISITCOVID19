@@ -3,17 +3,19 @@ package com.wce.wcevisitcovid19;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,18 +28,12 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.wce.wcevisitcovid19.models.UserLocation;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -67,7 +63,7 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
     ImageView locationImageView;
     private GoogleMap mMap;
     private LocationSource.OnLocationChangedListener mListener;
-
+    private static final String TAG = "UserDetailsActivity";
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference dbRef = database.getReference();
     String address;
@@ -86,11 +82,11 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
     String purposeOfVisit;
     String dateOfVisit;
     Double latitude,longitude;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_details);
 
         progressBar = findViewById(R.id.progressBar);
 
@@ -100,8 +96,8 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
         districtTextView = findViewById(R.id.dist_text_view);
         stateTextView = findViewById(R.id.stat_text_view);
         userTypeImageView = findViewById(R.id.user_type_image_view);
-        userTypeImageView.setAlpha(0.3f);
-        callImageView = findViewById(R.id.call_image);
+//        userTypeImageView.setAlpha(0.3f);
+        callImageView =(ImageView) findViewById(R.id.call_image);
         locationImageView = findViewById(R.id.marker_image);
 //        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 //                .findFragmentById(R.id.map);
@@ -121,7 +117,8 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
         purposeOfVisitTextView = findViewById(R.id.purpose_of_visit_text_view);
         dateOfVisitTextView = findViewById(R.id.date_of_visit_text_view);
 
-        LinearLayout contactLayout = findViewById(R.id.contact_number_layout);
+        LinearLayout contactLayout;
+        contactLayout = (LinearLayout) findViewById(R.id.contact_number_layout);
         contactLayout.setBaselineAligned(false);
 
         LinearLayout addressLayout = findViewById(R.id.address_layout);
@@ -142,6 +139,7 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
         Intent intent = getIntent();
         final String username = intent.getStringExtra("userName");
         String userType = intent.getStringExtra("userType");
+        userId = intent.getStringExtra("userId");
 
 
         callImageView.setOnClickListener(new View.OnClickListener() {
@@ -191,21 +189,13 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
 
                 final String fetchUsingPRN = intent.getStringExtra("fetchUsingPRN");
 
-                DatabaseReference studentsDatabaseReference = dbRef.child("Students");
-                studentsDatabaseReference.addValueEventListener(new ValueEventListener() {
+                DatabaseReference studentDatabaseReference = dbRef.child("Students").child(userId);
+                studentDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
+                    public void onDataChange(@NonNull DataSnapshot studentSnapshot) {
                             String studentName;
-                            if(fetchUsingPRN!=null && fetchUsingPRN.equals("yes"))
-                            {
-                                studentName = studentSnapshot.child("PRN").getValue(String.class);
-                            }
-                            else {
-                                studentName = studentSnapshot.child("Name").getValue(String.class);
-                            }
 
-                            if(studentName.equalsIgnoreCase(username)) {
+                                studentName = studentSnapshot.child("Name").getValue(String.class);
                                 contact = studentSnapshot.child("Contact number").getValue(String.class);
                                 district = studentSnapshot.child("District").getValue(String.class);
                                 state = studentSnapshot.child("State").getValue(String.class);
@@ -213,7 +203,7 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                                 address = studentSnapshot.child("Address").getValue(String.class);
                                 studentClass = studentSnapshot.child("Class").getValue(String.class);
                                 isQuarantined = studentSnapshot.child("Quarantined in lockdown").getValue(String.class);
-                                if(isQuarantined.equalsIgnoreCase("yes"))
+                                if("yes".equalsIgnoreCase(isQuarantined))
                                 {
                                     quarantinePeriodLayout.setVisibility(View.VISIBLE);
                                     quarantinePeriod = studentSnapshot.child("Quarantine period").getValue(String.class);
@@ -231,12 +221,10 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                                 quarantinePeriodTextView.setText(quarantinePeriod);
 
                                 if(fetchUsingPRN != null && fetchUsingPRN.equals("yes"))
-                                    usernameTextView.setText(studentSnapshot.child("Name").getValue(String.class));
+                                    usernameTextView.setText(studentName);
 
                                 progressBar.setVisibility(View.GONE);
                             }
-                        }
-                    }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -255,21 +243,19 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                 departmentLayout.setVisibility(View.VISIBLE);
                 emailLayout.setVisibility(View.VISIBLE);
 
-                DatabaseReference facultyDatabaseReference = dbRef.child("Faculty");
-                facultyDatabaseReference.addValueEventListener(new ValueEventListener() {
+                DatabaseReference facultyDatabaseReference = dbRef.child("Faculty").child(userId);
+                facultyDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot facultySnapshot : dataSnapshot.getChildren()) {
-                            String facultyName = facultySnapshot.child("Name").getValue(String.class);
+                    public void onDataChange(@NonNull DataSnapshot facultySnapshot) {
 
-                            if(facultyName.equalsIgnoreCase(username)) {
+                                String facultyName = facultySnapshot.child("Name").getValue(String.class);
                                 contact = facultySnapshot.child("Contact number").getValue(String.class);
                                 district = facultySnapshot.child("District").getValue(String.class);
                                 state = facultySnapshot.child("State").getValue(String.class);
                                 address = facultySnapshot.child("Address").getValue(String.class);
                                 isQuarantined = facultySnapshot.child("Quarantined in lockdown").getValue(String.class);
-                                if(isQuarantined.equalsIgnoreCase("yes"))
+                                if("yes".equalsIgnoreCase(isQuarantined))
                                 {
                                     quarantinePeriodLayout.setVisibility(View.VISIBLE);
                                     quarantinePeriod = facultySnapshot.child("Quarantine period").getValue(String.class);
@@ -289,10 +275,11 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                                 emailTextView.setText(email);
                                 departmentTextView.setText(department);
                                 quarantinePeriodTextView.setText(quarantinePeriod);
+                                usernameTextView.setText(facultyName);
                                 progressBar.setVisibility(View.GONE);
                             }
-                        }
-                    }
+
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -311,15 +298,11 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                 departmentLayout.setVisibility(View.VISIBLE);
 //                emailLayout.setVisibility(View.VISIBLE);
 
-                DatabaseReference nonTeachingDatabaseReference = dbRef.child("Non_teaching");
+                DatabaseReference nonTeachingDatabaseReference = dbRef.child("Non_teaching").child(userId);
                 nonTeachingDatabaseReference.addValueEventListener(new ValueEventListener() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot nonTeachingStaffSnapshot : dataSnapshot.getChildren()) {
-                            String nonTeachingStaffName = nonTeachingStaffSnapshot.child("Name").getValue(String.class);
-
-                            if(nonTeachingStaffName.equalsIgnoreCase(username)) {
+                    public void onDataChange(@NonNull DataSnapshot nonTeachingStaffSnapshot) {
                                 contact = nonTeachingStaffSnapshot.child("Contact").getValue(String.class);
                                 district = nonTeachingStaffSnapshot.child("District").getValue(String.class);
                                 state = nonTeachingStaffSnapshot.child("State").getValue(String.class);
@@ -347,8 +330,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
 //                                quarantinePeriodTextView.setText(quarantinePeriod);
                                 progressBar.setVisibility(View.GONE);
                             }
-                        }
-                    }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -369,18 +350,20 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                 purposeOfVisitLayout.setVisibility(View.VISIBLE);
                 dateOfVisitLayout.setVisibility(View.VISIBLE);
 
-                DatabaseReference outsidersDatabaseReference = dbRef.child("Outsiders");
-                outsidersDatabaseReference.addValueEventListener(new ValueEventListener() {
+
+                //trying to reduce fetch time and data
+                DatabaseReference outsidersDatabaseReference = dbRef.child("Outsiders").child(userId);
+                outsidersDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot outsiderSnapshot : dataSnapshot.getChildren()) {
-                            String outsiderName = outsiderSnapshot.child("Name").getValue(String.class);
 
-                            if(outsiderName.equalsIgnoreCase(username)) {
-                                contact = outsiderSnapshot.child("Contact number").getValue(String.class);
-                                district = outsiderSnapshot.child("District").getValue(String.class);
-                                state = outsiderSnapshot.child("State").getValue(String.class);
+//                            String outsiderName = dataSnapshot.child("Name").getValue(String.class);
+
+
+                                contact = dataSnapshot.child("Contact number").getValue(String.class);
+                                district = dataSnapshot.child("District").getValue(String.class);
+                                state = dataSnapshot.child("State").getValue(String.class);
 //                                address = nonTeachingStaffSnapshot.child("Address").getValue(String.class);
 //                                isQuarantined = nonTeachingStaffSnapshot.child("Quarantined in lockdown").getValue(String.class);
 //                                if(isQuarantined.equalsIgnoreCase("yes"))
@@ -389,12 +372,25 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
 //                                    quarantinePeriod = outsiderSnapshot.child("Quarantine period").getValue(String.class);
 //                                }
 //                                email = nonTeachingStaffSnapshot.child("Email").getValue(String.class);
-                                birthDate = outsiderSnapshot.child("Birth date").getValue(String.class);
-                                assert birthDate != null;
-                                age = getAge(birthDate);
-                                locOfVisit = outsiderSnapshot.child("Location of visit").getValue(String.class);
-                                purposeOfVisit = outsiderSnapshot.child("Purpose of visit").getValue(String.class);
-                                dateOfVisit = outsiderSnapshot.child("Date of visit").getValue(String.class);
+                        try
+                        {
+                            birthDate = dataSnapshot.child("Birth date").getValue(String.class);
+                            age = getAge(birthDate);
+                        }
+                        catch (Exception e)
+                        {
+                            age = dataSnapshot.child("Age").getValue(String.class);
+                        }
+
+                                locOfVisit = dataSnapshot.child("Location of visit").getValue(String.class);
+                                purposeOfVisit = dataSnapshot.child("Purpose of visit").getValue(String.class);
+                                dateOfVisit = dataSnapshot.child("Date of visit").getValue(String.class);
+                                //showing user's image
+                                String imgUri = dataSnapshot.child("Image data").getValue(String.class);
+//                        Log.i(TAG, "onDataChange: imageURI: "+imgUri);
+//                                byte[] decodedString = Base64.decode(imgUri, Base64.DEFAULT);
+//                                Bitmap bitMap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                                userTypeImageView.setImageBitmap(bitMap);
 
                                 contactTextView.setText(contact);
                                 districtTextView.setText(district);
@@ -409,14 +405,13 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
 //                                quarantinePeriodTextView.setText(quarantinePeriod);
                                 progressBar.setVisibility(View.GONE);
                             }
-                        }
-                    }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         Log.e("error", error.getMessage());
                     }
                 });
+
                 break;
 
             default:

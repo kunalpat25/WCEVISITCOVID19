@@ -28,6 +28,7 @@ public class QuarantinedStampedActivity extends AppCompatActivity {
     private DatabaseReference dbRef = database.getReference();
     ArrayList<String> usersList = new ArrayList<>();
     ArrayList<String> userTypeList = new ArrayList<>();
+    ArrayList<String> userIdList = new ArrayList<>();
     UserListAdapter userListAdapter;
     ListView quarantinedUsersListView;
     ProgressBar progressBar;
@@ -59,9 +60,10 @@ public class QuarantinedStampedActivity extends AppCompatActivity {
                     String quarantinedStatus = studentSnapshot.child("Quarantined in lockdown").getValue(String.class);
 
                     if(quarantinedStatus.equalsIgnoreCase("yes")) {
-//                        String displayName = studentName + " (\\033[3mStudent\\033[0m)";
+                        String userId = studentSnapshot.getKey();
                         usersList.add(studentName);
                         userTypeList.add("Students");
+                        userIdList.add(userId);
                         Log.i(TAG, "onDataChange: Student Quarantined in lockdown: " +quarantinedStatus +":"+ studentName);
                         userListAdapter.notifyDataSetChanged();
                     }
@@ -89,8 +91,9 @@ public class QuarantinedStampedActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     String quarantinedStatus = facultySnapshot.child("Quarantined in lockdown").getValue(String.class);
-                    if(quarantinedStatus.equalsIgnoreCase("yes")) {
-//                        String displayName = facultyName + " (\\033[3mFaculty\\033[0m)";
+                    if("yes".equalsIgnoreCase(quarantinedStatus)) {
+                        String facultyId = facultySnapshot.getKey();
+                        userIdList.add(facultyId);
                         usersList.add(facultyName);
                         userTypeList.add("Faculty");
                         Log.i(TAG, "onDataChange: Faculty Quarantined in lockdown " +quarantinedStatus +":"+ facultyName);

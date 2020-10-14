@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,9 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 import com.wce.wcevisitcovid19.models.Admin;
-import com.wce.wcevisitcovid19.models.Faculty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,24 +38,29 @@ public class MainActivity extends AppCompatActivity {
     EditText inputEmail;
     EditText inputPassword;
     Button signInBtn;
-    Button logoutBtn;
-    Button registerBtn;
+
     ProgressBar progressBar;
     FirebaseDatabase firebaseDatabase;
 //    private DatabaseReference facultyDatabaseReference;
     private DatabaseReference adminDatabaseReference;
     Admin admin;
+    Spinner userTypeSpinner;
 //    Faculty faculty;
 //    List<Faculty> facultyList = new ArrayList<>();
     List<Admin> adminList = new ArrayList<>();
 
     private FirebaseAuth auth;
     boolean isFaculty;
+    String userType;
+
+    boolean isNormalUser = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        new NormalUserActivity().scheduleAlarm();
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         auth = FirebaseAuth.getInstance();
@@ -66,8 +71,13 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 
+
+        //checking already logged in user
         if(checkUserLoginStatus(this))
         {
+            String typeOfUser = getUserType(this);
+            if(typeOfUser.equals("Admin"))
+
             adminDatabaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -83,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
                         String adminEmail = adminList.get(i).getEmail();
                         SharedPreferences preferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
                         String emailID = preferences.getString("email", null);
-                        if (emailID.equalsIgnoreCase(adminEmail)) {
+                        if (emailID.equalsIgnoreCase(adminEmail))
+                        {
                             Log.i(TAG, "onDataChange: Entered Email: " + emailID);
                             Log.i(TAG, "onDataChange: Now breaking loop..got admin");
                             Intent intent = new Intent(MainActivity.this, AdminActivity.class);
@@ -93,10 +104,10 @@ public class MainActivity extends AppCompatActivity {
                             finish();
                         }
                     }
-                    //if not login student
+                    //if not admin, login normal user
                     if(flag)
                     {
-                        Intent intent = new Intent(MainActivity.this, StudentActivity.class);
+                        Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
                         progressBar.setVisibility(View.GONE);
                         startActivity(intent);
                     }
@@ -115,48 +126,24 @@ public class MainActivity extends AppCompatActivity {
         inputEmail = findViewById(R.id.input_email);
         inputPassword = findViewById(R.id.input_password);
         signInBtn = findViewById(R.id.btn_login);
-        logoutBtn = findViewById(R.id.btn_logout);
-        registerBtn = findViewById(R.id.btn_register);
-
-        registerBtn.setOnClickListener(new View.OnClickListener() {
+        userTypeSpinner = findViewById(R.id.user_type_spinner);
+        final List<String> userTypesList  = new ArrayList<String>();
+        userTypesList.add("Select user type");
+        userTypesList.add("Admin");
+        userTypesList.add("Faculty");
+        userTypesList.add("Non Teaching Staff");
+        userTypesList.add("Student");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, userTypesList);
+        userTypeSpinner.setAdapter(adapter);
+        userTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                if (validateCredentials()) {
-                    final String emailID = inputEmail.getText().toString();
-                    final String password = inputPassword.getText().toString();
-                    auth.createUserWithEmailAndPassword(emailID, password)
-                            .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    Toast.makeText(MainActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
-                                    progressBar.setVisibility(View.GONE);
-                                    // If sign in fails, display a message to the user. If sign in succeeds
-                                    // the auth state listener will be notified and logic to handle the
-                                    // signed in user can be handled in the listener.
-                                    if (!task.isSuccessful()) {
-                                        Toast.makeText(MainActivity.this, "Registration failed." + task.getException(),
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(MainActivity.this, "Registered successfully!", Toast.LENGTH_SHORT).show();
-                                        inputEmail.setText("");
-                                        inputPassword.setText("");
-                                    }
-                                }
-                            });
-
-                }
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                userType = userTypesList.get(position);
             }
-        });
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
-                boolean loginStatus = checkUserLoginStatus(getApplicationContext());
-                if (loginStatus) {
-                    editor.clear();
-                    editor.apply();
-                    Toast.makeText(MainActivity.this, "You have been signed out successfully!", Toast.LENGTH_SHORT).show();
-                } else
-                    Toast.makeText(MainActivity.this, "Please Sign in first!", Toast.LENGTH_SHORT).show();
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -192,51 +179,57 @@ public class MainActivity extends AppCompatActivity {
                                                 //Login successful
                                                 editor.putString("loginStatus", "loggedIn");
                                                 editor.putString("email", emailID);
+                                                editor.putString("userType", userType);
                                                 editor.apply();
                                                 //For testing purpose
                                                 progressBar.setVisibility(View.GONE);
                                                 Toast.makeText(MainActivity.this, "Signed In successfully!", Toast.LENGTH_SHORT).show();
                                                 inputEmail.setText("");
                                                 inputPassword.setText("");
+                                                userTypeSpinner.setSelection(0);
                                                 //Handle next Activity
-                                                setIsFaculty(false);
-                                                adminDatabaseReference.addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                                            Admin admin = postSnapshot.getValue(Admin.class);
-                                                            adminList.add(admin);
-                                                        }
-                                                        boolean flag = true;
 
-                                                        //checking user is a faculty or not
-                                                        for (int i = 0; i < adminList.size(); i++) {
-                                                            Log.i(TAG, "onDataChange: Faculty Email: " + adminList.get(i).getEmail());
-                                                            String adminEmail = adminList.get(i).getEmail();
-                                                            if (emailID.equalsIgnoreCase(adminEmail)) {
-//                                                                setIsFaculty(true);
-                                                                Log.i(TAG, "onDataChange: Entered Email: " + emailID);
-                                                                Log.i(TAG, "onDataChange: Now breaking loop..got admin");
-                                                                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
-                                                                startActivity(intent);
-                                                                flag = false;
-                                                                finish();
-                                                                break;
+                                                if (userType.equals("Admin"))
+                                                {
+                                                    adminDatabaseReference.addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                                                Admin admin = postSnapshot.getValue(Admin.class);
+                                                                adminList.add(admin);
+                                                            }
+
+
+                                                            //checking user is a admin or not
+                                                            for (int i = 0; i < adminList.size(); i++) {
+                                                                Log.i(TAG, "onDataChange: Admin Email: " + adminList.get(i).getEmail());
+                                                                String adminEmail = adminList.get(i).getEmail();
+                                                                if (emailID.equalsIgnoreCase(adminEmail))
+                                                                {
+                                                                    Log.i(TAG, "onDataChange: Entered Email: " + emailID);
+                                                                    Log.i(TAG, "onDataChange: Now breaking loop..got admin");
+                                                                    Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                                                                    isNormalUser = false;
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                    break;
+                                                                }
                                                             }
                                                         }
-                                                        //if not login student
-                                                        if(flag)
-                                                        {
-                                                            Intent intent = new Intent(MainActivity.this, StudentActivity.class);
-                                                            startActivity(intent);
-                                                        }
-                                                    }
 
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
-                                                        Log.e("error", error.getMessage());
-                                                    }
-                                                });
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                            Log.e("error", error.getMessage());
+                                                        }
+                                                    });
+                                            }
+                                                //if not admin, login student
+                                                if(isNormalUser)
+                                                {
+                                                    Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
+                                                    intent.putExtra("userType",userType);
+                                                    startActivity(intent);
+                                                }
                                             }
                                         }
                                     });
@@ -254,12 +247,18 @@ public class MainActivity extends AppCompatActivity {
         boolean flag = false;
         final String emailID = inputEmail.getText().toString();
         final String password = inputPassword.getText().toString();
-        if (emailID.matches("") || password.matches("")) {
-            Toast.makeText(MainActivity.this, "Please input credentials", Toast.LENGTH_SHORT).show();
-            if (TextUtils.isEmpty(emailID)) {
-                inputEmail.requestFocus();
-            } else {
-                inputPassword.requestFocus();
+        if (emailID.matches("") || password.matches("") || userType.equals("Select user type")) {
+            if (userType.equals("Select user type"))
+            {
+                Toast.makeText(this, "Please select User Type", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(MainActivity.this, "Please input credentials", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(emailID)) {
+                    inputEmail.requestFocus();
+                } else if (TextUtils.isEmpty(password)) {
+                    inputPassword.requestFocus();
+                }
             }
         } else
             flag = true;
@@ -284,14 +283,12 @@ public class MainActivity extends AppCompatActivity {
         return loginStatus;
     }
 
-    public void setIsFaculty(boolean status)
+    public String getUserType(Context context)
     {
-        this.isFaculty = status;
+        SharedPreferences preferences = context.getSharedPreferences("WCEVISITCOVID19", 0);
+        return preferences.getString("userType", null);
     }
-    public boolean getIsFaculty()
-    {
-        return this.isFaculty;
-    }
+
     @Override
     protected void onResume() {
         super.onResume();

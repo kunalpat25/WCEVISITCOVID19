@@ -39,6 +39,31 @@
     <string name="text_location_permission">Permission for accessing location is needed</string>
     <string name="ok">OK</string>
     <string name="current_location">"Current Location : "</string>
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false"></string>
+    <string name="status">Status</string>
+    <string name="choose_date">Choose a date</string>
+    <string name="self_assessment">Self Assessment</string>
+    <string name="date">Date :</string>
+
+    <string name="confirmed_patient_contact_question">Have you been in contact with a confirmed COVID19 positive patient in the past 14 days?</string>
+    <string name="affected_region_question">Have you been to any affected countries or regions or towns in the past 14 days?</string>
+    <string name="containment_zone_question">Have you traveled anywhere from Containment Zone of COVID-19 in last 28–45 days?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="select_symptoms">Select symptoms from following list :</string>
+    <string name="body_ache">Body aches or muscle pain</string>
+    <string name="chest_pain">Chest pain</string>
+    <string name="breathing_difficulty">Difficulty in breathing</string>
+    <string name="dry_cough">Dry cough</string>
+    <string name="fever">Fever</string>
+    <string name="headache">Headache</string>
+    <string name="runny_nose">Runny nose</string>
+    <string name="sore_throat">Sore throat</string>
+    <string name="tiredness">Tiredness</string>
+    <string name="none">None of the above</string>
+
+    <string name="default_notification_channel_id">alarm_channel_id_01</string>
+    <string name="visitors">Visitors</string>
+    <string name="count">Count :</string>
+    <string name="no_visitor">No visitor found</string>
 
 </resources>

@@ -69,6 +69,7 @@ public class DistrictsListActivity extends AppCompatActivity {
                 String districtName = districtsList.get(position);
                 Intent intent = new Intent(DistrictsListActivity.this,DistrictUsersActivity.class);
                 intent.putExtra("district",districtName);
+                Log.i(TAG, "onItemClick: district name : "+districtName);
                 startActivity(intent);
             }
         });

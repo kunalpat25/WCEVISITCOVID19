@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "574151890663",
+    "firebase_url": "https://wcevisitcovid19.firebaseio.com",
+    "project_id": "wcevisitcovid19",
+    "storage_bucket": "wcevisitcovid19.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574151890663:android:b24648c40258e94851f442",
+        "android_client_info": {
+          "package_name": "com.wce.wcevisitcovid19"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574151890663-26r9jlns09lbgsmha7sdlc2ud2t0st7q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wce.wcevisitcovid19",
+            "certificate_hash": "f85ee23967dd6f21ed9570ef1bc76f3e8c9ae289"
+          }
+        },
+        {
+          "client_id": "574151890663-rueknll2ek73990qtjs7p563beadplmu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiDP8PiP2aQ98e_eP9ua_W1bwAqRkX0_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574151890663-rueknll2ek73990qtjs7p563beadplmu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
