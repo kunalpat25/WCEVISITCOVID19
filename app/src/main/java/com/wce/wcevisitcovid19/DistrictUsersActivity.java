@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,7 +23,8 @@ import com.wce.wcevisitcovid19.adapters.UserListAdapter;
 
 import java.util.ArrayList;
 
-public class DistrictUsersActivity extends AppCompatActivity {
+public class DistrictUsersActivity extends AppCompatActivity
+{
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference dbRef = database.getReference();
@@ -35,6 +37,9 @@ public class DistrictUsersActivity extends AppCompatActivity {
     UserListAdapter userListAdapter;
     ListView districtUsersListView;
     ProgressBar progressBar;
+
+    String districtName;
+    String username,userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,41 +54,37 @@ public class DistrictUsersActivity extends AppCompatActivity {
         districtUsersListView.setAdapter(userListAdapter);
 
         Intent intent = getIntent();
-        final String districtName = intent.getStringExtra("district");
+        districtName = intent.getStringExtra("district");
         Log.i(TAG, "onCreate: districtName from intent: "+districtName);
         districtTextView.setText(districtName);
 
+        //trial to reduce data consumption, if not worked, remove
         //fetching students
-        DatabaseReference studentsDatabaseReference = dbRef.child("Students");
-        studentsDatabaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference studentsDatabaseReference = dbRef.child("District Wise Users").child(districtName).child("Students");
+        studentsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
 
-                    String studentName,studentId;
-                    try {
-                        Log.i(TAG, "onDataChange: StudentName: "+studentSnapshot.child("Name").getValue(String.class));
-                        studentName = studentSnapshot.child("Name").getValue(String.class);
-                    } catch (NullPointerException e) {
-                        studentName = studentSnapshot.getKey();
-                        e.printStackTrace();
-                    }
-                    String district="default";
-                    try {
-                        district = studentSnapshot.child("District").getValue(String.class);
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onDataChange: district: "+ district,e );
-                        continue;
-                    }
-                    studentId = studentSnapshot.getKey();
-                    if(districtName.equals(district)) {
-                        usersList.add(studentName);
-                        userTypeList.add("Students");
-                        userIdList.add(studentId);
-                        Log.i(TAG, "onDataChange: Student in district: " +district +":"+ studentName);
-                        userListAdapter.notifyDataSetChanged();
-                    }
+                    userId = studentSnapshot.getValue(String.class);
+                    DatabaseReference studNameDatabaseReference = dbRef.child("Students").child(userId).child("Name");
+                    studNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            username = snapshot.getValue(String.class);
+                            Log.i(TAG, "onDataChange: StudentName: "+username);
+                            usersList.add(username);
+                            userTypeList.add("Students");
+                            userIdList.add(userId);
+                            Log.i(TAG, "onDataChange: Student in district: " +districtName +":"+ username);
+                            userListAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("error", error.getMessage());
+                        }
+                    });
                 }
             }
 
@@ -95,31 +96,35 @@ public class DistrictUsersActivity extends AppCompatActivity {
 
 
         //fetching faculties
-        DatabaseReference facultiesDatabaseReference = dbRef.child("Faculty");
-        facultiesDatabaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference facultyDatabaseReference = dbRef.child("District Wise Users").child(districtName).child("Faculty");
+        facultyDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot facultySnapshot : dataSnapshot.getChildren()) {
-                    String facultyName,facultyId;
-                    try {
-                        Log.i(TAG, "onDataChange: FacultyName: "+facultySnapshot.child("Name").getValue(String.class));
 
-                        facultyName = facultySnapshot.child("Name").getValue(String.class);
-                    } catch (Exception e) {
-                        facultyName = facultySnapshot.getKey();
-                        e.printStackTrace();
-                    }
-                    String district = facultySnapshot.child("District").getValue(String.class);
-                    facultyId = facultySnapshot.getKey();
-                    if(district.equalsIgnoreCase(districtName)) {
-//                        String displayName = facultyName + " (\\033[3mFaculty\\033[0m)";
-                        usersList.add(facultyName);
-                        userTypeList.add("Faculty");
-                        userIdList.add(facultyId);
-                        Log.i(TAG, "onDataChange: Faculty in district: " +district +":"+ facultyName);
-//                        simpleListAdapter.clear();
-                        userListAdapter.notifyDataSetChanged();
-                    }
+                    userId = facultySnapshot.getValue(String.class);
+                    DatabaseReference facultyNameDatabaseReference = dbRef.child("Faculty").child(userId).child("Name");
+                    facultyNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            username = snapshot.getValue(String.class);
+                            Log.i(TAG, "onDataChange: facultyName: "+username);
+                            usersList.add(username);
+                            userTypeList.add("Faculty");
+                            userIdList.add(userId);
+                            Log.i(TAG, "onDataChange: Faculty in district: " +districtName +":"+ username);
+                            userListAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("error", error.getMessage());
+                        }
+                    });
+
+
+
+
                 }
             }
 
@@ -131,41 +136,35 @@ public class DistrictUsersActivity extends AppCompatActivity {
 
 
         //fetching Non-teaching staff
-        DatabaseReference nonTeachingDatabaseReference = dbRef.child("Non_teaching");
-        nonTeachingDatabaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference nonTeachingDatabaseReference = dbRef.child("District Wise Users").child(districtName).child("Non_teaching");
+        nonTeachingDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot nonTeachingSnapshot : dataSnapshot.getChildren()) {
-                    String nonTeachingStaffName,nonTeachingStaffId;
-                    try {
-                        Log.i(TAG, "onDataChange: NonteachingstaffName: "+nonTeachingSnapshot.child("Name").getValue(String.class));
 
-                        nonTeachingStaffName = nonTeachingSnapshot.child("Name").getValue(String.class);
-                    }
-                    catch (NullPointerException e)
-                    {
-                        nonTeachingStaffName = nonTeachingSnapshot.getKey();
-                    }
-                    String district;
-                    try {
-                        district = nonTeachingSnapshot.child("District").getValue(String.class);
-                    }
-                    catch (NullPointerException e)
-                    {
-                        e.printStackTrace();
-                        continue;
-                    }
+                    userId = nonTeachingSnapshot.getValue(String.class);
+                    DatabaseReference facultyNameDatabaseReference = dbRef.child("Non_teaching").child(userId).child("Name");
+                    facultyNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            username = snapshot.getValue(String.class);
+                            Log.i(TAG, "onDataChange: NonTeaching Name: "+username);
+                            usersList.add(username);
+                            userTypeList.add("Non_teaching");
+                            userIdList.add(userId);
+                            Log.i(TAG, "onDataChange: NonTeaching Staff in district: " +districtName +":"+ username);
+                            userListAdapter.notifyDataSetChanged();
+                        }
 
-                    nonTeachingStaffId = nonTeachingSnapshot.getKey();
-                    if(district.equals(districtName)) {
-//                        String displayName = nonTeachingStaffName + " (\\033[3mNon-Teaching Staff\\033[0m)";
-                        usersList.add(nonTeachingStaffName);
-                        userTypeList.add("Non_teaching");
-                        userIdList.add(nonTeachingStaffId);
-                        Log.i(TAG, "onDataChange: Non-teaching staff in district: " +district +":"+ nonTeachingStaffName);
-//                        simpleListAdapter.clear();
-                        userListAdapter.notifyDataSetChanged();
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("error", error.getMessage());
+                        }
+                    });
+
+
+
+
                 }
             }
 
@@ -177,41 +176,31 @@ public class DistrictUsersActivity extends AppCompatActivity {
 
 
         //fetching outsiders
-        DatabaseReference outsiderDatabaseReference = dbRef.child("Outsiders");
-        outsiderDatabaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference outsidersDatabaseReference = dbRef.child("District Wise Users").child(districtName).child("Outsiders");
+        outsidersDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot outsiderSnapshot : dataSnapshot.getChildren()) {
-                    String outsiderName,district="",outsiderId;
-                    try
-                    {
-                        district = outsiderSnapshot.child("District").getValue(String.class);
-                    }
-                    catch (NullPointerException e)
-                    {
-                        district="";
-                        e.printStackTrace();
-                        continue;
-                    }
 
-                    if(districtName.equals(district)) {
-                        outsiderName = outsiderSnapshot.child("Name").getValue(String.class);
-                        outsiderId = outsiderSnapshot.getKey();
-                        usersList.add(outsiderName);
-                        userTypeList.add("Outsiders");
-                        userIdList.add(outsiderId);
-                        Log.i(TAG, "onDataChange: Outsider in district " +district +":"+ outsiderName);
-                        userListAdapter.notifyDataSetChanged();
-                    }
-//                    try {
-//                        Log.i(TAG, "onDataChange: OutsiderName: "+outsiderSnapshot.child("Name").getValue(String.class));
-//                        outsiderName = outsiderSnapshot.child("Name").getValue(String.class);
-//                    }
-//                    catch (NullPointerException e)
-//                    {
-//                        Log.i(TAG, "onDataChange: OutsiderName: "+outsiderSnapshot.getKey());
-//                        outsiderName = outsiderSnapshot.getKey();
-//                    }
+                    userId = outsiderSnapshot.getValue(String.class);
+                    DatabaseReference outsiderNameDatabaseReference = dbRef.child("Outsiders").child(userId).child("Name");
+                    outsiderNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            username = snapshot.getValue(String.class);
+                            Log.i(TAG, "onDataChange: OutsiderName: "+username);
+                            usersList.add(username);
+                            userTypeList.add("Outsiders");
+                            userIdList.add(userId);
+                            Log.i(TAG, "onDataChange: Outsider in district: " +districtName +":"+ username);
+                            userListAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("error", error.getMessage());
+                        }
+                    });
 
 
 
@@ -224,6 +213,7 @@ public class DistrictUsersActivity extends AppCompatActivity {
                 Log.e("error", error.getMessage());
             }
         });
+
 
         progressBar.setVisibility(View.GONE);
 

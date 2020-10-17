@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WCE VISIT COVID19</string>
+    <string name="app_name">WCE रक्षणोपाय</string>
     <string name="email_hint">Email ID</string>
     <string name="password_hint">Password</string>
     <string name="submit">Submit</string>
@@ -65,5 +65,8 @@
     <string name="visitors">Visitors</string>
     <string name="count">Count :</string>
     <string name="no_visitor">No visitor found</string>
+    <string name="meeting_with">"Meeting With : "</string>
+    <string name="in_time">In Time :</string>
+    <string name="out_time">Out Time :</string>
 
 </resources>

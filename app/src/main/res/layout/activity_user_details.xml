@@ -25,6 +25,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 >
     <ImageView
         android:id="@+id/user_type_image_view"
@@ -34,7 +35,8 @@
         android:background="@drawable/round_background"
         android:elevation="16dp"
         android:layout_centerVertical="true"
-    />
+        android:contentDescription="User Image"
+        android:layout_alignParentStart="true"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -384,13 +386,39 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/date_of_visit_layout"
+        android:id="@+id/meeting_with_layout"
         android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="gone"
         android:layout_below="@id/purpose_of_visit_layout"
+        android:baselineAligned="false"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/meeting_with"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"/>
+        <TextView
+            android:id="@+id/meeting_with_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:gravity="center_vertical"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/date_of_visit_layout"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_below="@id/meeting_with_layout"
         android:baselineAligned="false"
         >
         <TextView
@@ -410,13 +438,65 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/in_time_layout"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_below="@id/date_of_visit_layout"
+        android:baselineAligned="false"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/in_time"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"/>
+        <TextView
+            android:id="@+id/in_time_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:gravity="center_vertical"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/out_time_layout"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_below="@id/in_time_layout"
+        android:baselineAligned="false"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/out_time"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"/>
+        <TextView
+            android:id="@+id/out_time_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:gravity="center_vertical"
+            />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/quarantine_period_layout"
         android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="gone"
-        android:layout_below="@id/location_of_visit_layout"
+        android:layout_below="@id/out_time_layout"
         android:baselineAligned="false"
         >
         <TextView

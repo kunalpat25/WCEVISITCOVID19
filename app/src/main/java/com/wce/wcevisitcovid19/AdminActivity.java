@@ -43,10 +43,10 @@ public class AdminActivity extends AppCompatActivity
         menuList.add("Visitors' List");
         menuList.add(getString(R.string.senior_citizens));
         menuList.add(getString(R.string.quarantine_stamped));
-        menuList.add(getString(R.string.travelled_from_containment_zone));
-        menuList.add(getString(R.string.group_more_than_five));
-        menuList.add(getString(R.string.without_mask));
-        menuList.add(getString(R.string.violating_covid19_guidelines));
+//        menuList.add(getString(R.string.travelled_from_containment_zone));
+//        menuList.add(getString(R.string.group_more_than_five));
+//        menuList.add(getString(R.string.without_mask));
+//        menuList.add(getString(R.string.violating_covid19_guidelines));
 
         adapter=new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
