@@ -172,8 +172,10 @@ public class MainActivity extends AppCompatActivity {
                                                 // there was an error
                                                 if (password.length() < 6) {
                                                     inputPassword.setError(getString(R.string.minimum_password));
+                                                    progressBar.setVisibility(View.GONE);
                                                 } else {
                                                     Toast.makeText(MainActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
+                                                    progressBar.setVisibility(View.GONE);
                                                 }
                                             } else {
                                                 //Login successful
