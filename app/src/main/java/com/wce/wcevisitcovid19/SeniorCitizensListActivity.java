@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wce.wcevisitcovid19.adapters.SeniorCitizensListAdapter;
 import com.wce.wcevisitcovid19.adapters.UserListAdapter;
+import com.wce.wcevisitcovid19.utils.DateUtils;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -82,19 +83,20 @@ public class SeniorCitizensListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String[] Birth_Date;
+                    String birthDate;
+                    int age;
                     try {
-                        Birth_Date = ((String) postSnapshot.child("Birth date").getValue()).split("/");
+                        birthDate = ((String) postSnapshot.child("Birth date").getValue());
+                        DateUtils du = new DateUtils(birthDate);
+                        int day = Integer.parseInt(du.extractDate());
+                        int month = Integer.parseInt(du.extractMonth());
+                        int year = Integer.parseInt(du.extractYear());
+                        age = du.getAge(year,month,day);
                     }
                     catch(Exception e) {
                         e.printStackTrace();
                         continue;
                     }
-                    LocalDate today=LocalDate.of(year,month,date);
-                    LocalDate birth_date=LocalDate.of(Integer.parseInt(Birth_Date[2]),Integer.parseInt(Birth_Date[1]),Integer.parseInt(Birth_Date[0]));
-
-                    int age= Period.between(birth_date,today).getYears();
-
                     if(age>=65) {
                         String facultyName = postSnapshot.getKey();
                         String facultyId = postSnapshot.getKey();
@@ -117,19 +119,20 @@ public class SeniorCitizensListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String[] Birth_Date=null;
+                    String birthDate;
+                    int age;
                     try {
-                        Birth_Date = ((String) postSnapshot.child("Birth date").getValue()).split("/");
+                        birthDate = ((String) postSnapshot.child("Birth date").getValue());
+                        DateUtils du = new DateUtils(birthDate);
+                        int day = Integer.parseInt(du.extractDate());
+                        int month = Integer.parseInt(du.extractMonth());
+                        int year = Integer.parseInt(du.extractYear());
+                        age = du.getAge(year,month,day);
                     }
                     catch(Exception e) {
                         e.printStackTrace();
                         continue;
                     }
-                    LocalDate today=LocalDate.of(year,month,date);
-                    LocalDate birth_date=LocalDate.of(Integer.parseInt(Birth_Date[2]),Integer.parseInt(Birth_Date[1]),Integer.parseInt(Birth_Date[0]));
-
-                    int age= Period.between(birth_date,today).getYears();
-
                     if(age>=65) {
                         String nonTeachingStaffName = postSnapshot.getKey();
 
@@ -151,20 +154,20 @@ public class SeniorCitizensListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String[] Birth_Date=null;
+                    String birthDate;
+                    int age;
                     try {
-                        Birth_Date = ((String) postSnapshot.child("Birth date").getValue()).split("/");
+                        birthDate = ((String) postSnapshot.child("Birth date").getValue());
+                        DateUtils du = new DateUtils(birthDate);
+                        int day = Integer.parseInt(du.extractDate());
+                        int month = Integer.parseInt(du.extractMonth());
+                        int year = Integer.parseInt(du.extractYear());
+                        age = du.getAge(year,month,day);
                     }
                     catch(Exception e) {
                         e.printStackTrace();
                         continue;
                     }
-
-                    LocalDate today=LocalDate.of(year,month,date);
-                    LocalDate birth_date=LocalDate.of(Integer.parseInt(Birth_Date[2]),Integer.parseInt(Birth_Date[1]),Integer.parseInt(Birth_Date[0]));
-
-                    int age= Period.between(birth_date,today).getYears();
-
                     if(age>=65) {
                         String outsiderName = postSnapshot.getKey();
 //                        String displayName = outsiderName + " (\\033[3mVisitor\\033[0m)";
