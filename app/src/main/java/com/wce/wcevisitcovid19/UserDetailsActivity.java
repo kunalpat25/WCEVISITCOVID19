@@ -132,10 +132,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
         userTypeImageView.setAlpha(0.3f);
         callImageView =(ImageView) findViewById(R.id.call_image);
         locationImageView = findViewById(R.id.marker_image);
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
-
         addressTextView = findViewById(R.id.address_text_view);
         classTextView = findViewById(R.id.class_text_view);
         prnTextView = findViewById(R.id.prn_text_view);
@@ -184,7 +180,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                 quarantinedLayout.setVisibility(View.VISIBLE);
                 locationLayout.setVisibility(View.VISIBLE);
 
-                final String fetchUsingPRN = intent.getStringExtra("fetchUsingPRN");
                 Log.i(TAG, "onCreate: Student id: "+userId);
                 DatabaseReference studentDatabaseReference = dbRef.child("Students").child(userId);
                 studentDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -217,9 +212,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                         classTextView.setText(studentClass);
                         quarantinedTextView.setText(isQuarantined);
                         quarantinePeriodTextView.setText(quarantinePeriod);
-
-                        if(fetchUsingPRN != null && fetchUsingPRN.equals("yes"))
-                            usernameTextView.setText(studentName);
 
                         progressBar.setVisibility(View.GONE);
                     }
