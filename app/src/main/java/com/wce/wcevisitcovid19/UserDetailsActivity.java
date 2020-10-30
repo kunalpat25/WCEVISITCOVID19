@@ -5,17 +5,11 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,10 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.Calendar;
+import com.wce.wcevisitcovid19.utils.DateUtils;
 
 public class UserDetailsActivity extends AppCompatActivity implements LocationListener {
 
@@ -130,7 +121,7 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
         stateTextView = findViewById(R.id.stat_text_view);
         userTypeImageView =  findViewById(R.id.user_type_image_view);
         userTypeImageView.setAlpha(0.3f);
-        callImageView =(ImageView) findViewById(R.id.call_image);
+        callImageView = findViewById(R.id.call_image);
         locationImageView = findViewById(R.id.marker_image);
         addressTextView = findViewById(R.id.address_text_view);
         classTextView = findViewById(R.id.class_text_view);
@@ -251,9 +242,17 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                             quarantinePeriod = facultySnapshot.child("Quarantine period").getValue(String.class);
                         }
                         email = facultySnapshot.child("Email").getValue(String.class);
-                        birthDate = facultySnapshot.child("Birth date").getValue(String.class);
-                        assert birthDate != null;
-                        age = getAge(birthDate);
+                        try {
+                            birthDate = facultySnapshot.child("Birth date").getValue(String.class);
+                            DateUtils du = new DateUtils(birthDate);
+                            age = String.valueOf(du.getAge(Integer.parseInt(du.extractYear()),Integer.parseInt(du.extractMonth()),Integer.parseInt(du.extractDate())));
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                            Long longAge = facultySnapshot.child("Age").getValue(Long.class);
+                            age = String.valueOf(longAge);
+                        }
                         department = facultySnapshot.child("Department").getValue(String.class);
 
                         contactTextView.setText(contact);
@@ -302,9 +301,17 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
 //                                    quarantinePeriod = nonTeachingStaffSnapshot.child("Quarantine period").getValue(String.class);
 //                                }
 //                                email = nonTeachingStaffSnapshot.child("Email").getValue(String.class);
-                        birthDate = nonTeachingStaffSnapshot.child("Birth date").getValue(String.class);
-                        assert birthDate != null;
-                        age = getAge(birthDate);
+                        try {
+                            birthDate = nonTeachingStaffSnapshot.child("Birth date").getValue(String.class);
+                            DateUtils du = new DateUtils(birthDate);
+                            age = String.valueOf(du.getAge(Integer.parseInt(du.extractYear()),Integer.parseInt(du.extractMonth()),Integer.parseInt(du.extractDate())));
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                            Long longAge = nonTeachingStaffSnapshot.child("Age").getValue(Long.class);
+                            age = String.valueOf(longAge);
+                        }
                         department = nonTeachingStaffSnapshot.child("Department").getValue(String.class);
 
                         contactTextView.setText(contact);
@@ -369,7 +376,9 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                         try
                         {
                             birthDate = dataSnapshot.child("Birth date").getValue(String.class);
-                            age = getAge(birthDate);
+
+                            DateUtils du = new DateUtils(birthDate);
+                            age = String.valueOf(du.getAge(Integer.parseInt(du.extractYear()),Integer.parseInt(du.extractMonth()),Integer.parseInt(du.extractDate())));
                         }
                         catch (Exception e)
                         {
@@ -452,47 +461,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
         });
 
         usernameTextView.setText(username);
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private String getAge(String birthDate) {
-
-        //if problem occurs on lower android versions, uncomment following code and comment another section
-
-/*        Calendar dob = Calendar.getInstance();
-        Calendar today = Calendar.getInstance();
-
-        int day = Integer.parseInt(birthDate.substring(0,2));
-        int month = Integer.parseInt(birthDate.substring(3,5));
-        int year = Integer.parseInt(birthDate.substring(6));
-        dob.set(year, month, day);
-
-        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
-
-        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
-            age--;
-        }
-
-        int ageInt = age; */
-
-
-        //runs only on devices above version 'O'
-
-        String[] Birth_Date;
-
-        Birth_Date = birthDate.split("/");
-
-        final int year = Calendar.getInstance().get(Calendar.YEAR);
-        final int month = Calendar.getInstance().get(Calendar.MONTH)+1;
-        final int date = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-
-        LocalDate today=LocalDate.of(year,month,date);
-        LocalDate birth_date=LocalDate.of(Integer.parseInt(Birth_Date[2]),Integer.parseInt(Birth_Date[1]),Integer.parseInt(Birth_Date[0]));
-
-        int age= Period.between(birth_date,today).getYears();
-
-        return Integer.toString(age);
     }
 
     @Override
