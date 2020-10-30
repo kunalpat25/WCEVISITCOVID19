@@ -41,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
     FirebaseDatabase firebaseDatabase;
-//    private DatabaseReference facultyDatabaseReference;
+    //    private DatabaseReference facultyDatabaseReference;
     private DatabaseReference adminDatabaseReference;
     Admin admin;
     Spinner userTypeSpinner;
-//    Faculty faculty;
+    //    Faculty faculty;
 //    List<Faculty> facultyList = new ArrayList<>();
     List<Admin> adminList = new ArrayList<>();
 
@@ -73,51 +73,72 @@ public class MainActivity extends AppCompatActivity {
 
 
         //checking already logged in user
-        if(checkUserLoginStatus(this))
-        {
+        if (checkUserLoginStatus(this)) {
             String typeOfUser = getUserType(this);
-            if(typeOfUser.equals("Admin"))
+            if (typeOfUser.equals("Admin")) {
 
-            adminDatabaseReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        Admin admin = postSnapshot.getValue(Admin.class);
-                        adminList.add(admin);
-                    }
-                    boolean flag = true;
+                adminDatabaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            Admin admin = postSnapshot.getValue(Admin.class);
+                            adminList.add(admin);
+                        }
+                        boolean flag = true;
 
-                    //checking user is an admin or not
-                    for (int i = 0; i < adminList.size(); i++) {
-                        Log.i(TAG, "onDataChange: Admin Email: " + adminList.get(i).getEmail());
-                        String adminEmail = adminList.get(i).getEmail();
-                        SharedPreferences preferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
-                        String emailID = preferences.getString("email", null);
-                        if (emailID.equalsIgnoreCase(adminEmail))
-                        {
-                            Log.i(TAG, "onDataChange: Entered Email: " + emailID);
-                            Log.i(TAG, "onDataChange: Now breaking loop..got admin");
-                            Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                        //checking user is an admin or not
+                        for (int i = 0; i < adminList.size(); i++) {
+                            Log.i(TAG, "onDataChange: Admin Email: " + adminList.get(i).getEmail());
+                            String adminEmail = adminList.get(i).getEmail();
+                            SharedPreferences preferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
+                            String emailID = preferences.getString("email", null);
+                            if (emailID.equalsIgnoreCase(adminEmail)) {
+                                Log.i(TAG, "onDataChange: Entered Email: " + emailID);
+                                Log.i(TAG, "onDataChange: Now breaking loop..got admin");
+                                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                                progressBar.setVisibility(View.GONE);
+                                startActivity(intent);
+                                flag = false;
+                                finish();
+                            }
+                        }
+                        //if not admin, login normal user
+                        if (flag) {
+                            Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
                             progressBar.setVisibility(View.GONE);
                             startActivity(intent);
-                            flag = false;
-                            finish();
                         }
                     }
-                    //if not admin, login normal user
-                    if(flag)
-                    {
-                        Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
-                        progressBar.setVisibility(View.GONE);
-                        startActivity(intent);
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("error", error.getMessage());
                     }
+                });
+            }
+            else //Normal User is logged in
+                {
+                String dailyAssessmentFilledStatus = sharedPreferences.getString("dailyAssessmentStatus", null);
+                if ("filled".equals(dailyAssessmentFilledStatus))
+                {
+                    //if filled
+                    //show Guideline Activity
+                    progressBar.setVisibility(View.GONE);
+                    Intent intent = new Intent(MainActivity.this, GuidelinesActivity.class);
+                    startActivity(intent);
+                }
+                else
+                    {
+                        //else not filled
+                        //show NormalUser activity
+                    progressBar.setVisibility(View.GONE);
+                    Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
+                    startActivity(intent);
+
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("error", error.getMessage());
-                }
-            });
+
+            }
         }
         else
             progressBar.setVisibility(View.GONE);
@@ -127,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         inputPassword = findViewById(R.id.input_password);
         signInBtn = findViewById(R.id.btn_login);
         userTypeSpinner = findViewById(R.id.user_type_spinner);
-        final List<String> userTypesList  = new ArrayList<String>();
+        final List<String> userTypesList = new ArrayList<String>();
         userTypesList.add("Select user type");
         userTypesList.add("Admin");
         userTypesList.add("Faculty");
@@ -191,8 +212,7 @@ public class MainActivity extends AppCompatActivity {
                                                 userTypeSpinner.setSelection(0);
                                                 //Handle next Activity
 
-                                                if (userType.equals("Admin"))
-                                                {
+                                                if (userType.equals("Admin")) {
                                                     adminDatabaseReference.addValueEventListener(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -206,8 +226,7 @@ public class MainActivity extends AppCompatActivity {
                                                             for (int i = 0; i < adminList.size(); i++) {
                                                                 Log.i(TAG, "onDataChange: Admin Email: " + adminList.get(i).getEmail());
                                                                 String adminEmail = adminList.get(i).getEmail();
-                                                                if (emailID.equalsIgnoreCase(adminEmail))
-                                                                {
+                                                                if (emailID.equalsIgnoreCase(adminEmail)) {
                                                                     Log.i(TAG, "onDataChange: Entered Email: " + emailID);
                                                                     Log.i(TAG, "onDataChange: Now breaking loop..got admin");
                                                                     Intent intent = new Intent(MainActivity.this, AdminActivity.class);
@@ -224,12 +243,11 @@ public class MainActivity extends AppCompatActivity {
                                                             Log.e("error", error.getMessage());
                                                         }
                                                     });
-                                            }
+                                                }
                                                 //if not admin, login student
-                                                if(isNormalUser)
-                                                {
+                                                if (isNormalUser) {
                                                     Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
-                                                    intent.putExtra("userType",userType);
+                                                    intent.putExtra("userType", userType);
                                                     startActivity(intent);
                                                 }
                                             }
@@ -250,11 +268,9 @@ public class MainActivity extends AppCompatActivity {
         final String emailID = inputEmail.getText().toString();
         final String password = inputPassword.getText().toString();
         if (emailID.matches("") || password.matches("") || userType.equals("Select user type")) {
-            if (userType.equals("Select user type"))
-            {
+            if (userType.equals("Select user type")) {
                 Toast.makeText(this, "Please select User Type", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Toast.makeText(MainActivity.this, "Please input credentials", Toast.LENGTH_SHORT).show();
                 if (TextUtils.isEmpty(emailID)) {
                     inputEmail.requestFocus();
@@ -285,8 +301,7 @@ public class MainActivity extends AppCompatActivity {
         return loginStatus;
     }
 
-    public String getUserType(Context context)
-    {
+    public String getUserType(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("WCEVISITCOVID19", 0);
         return preferences.getString("userType", null);
     }

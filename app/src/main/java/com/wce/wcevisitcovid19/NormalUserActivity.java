@@ -75,12 +75,12 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
     double latitude;
     double longitude;
     FirebaseUser currentUser;
-    String userEmail,userPRN,userType;
+    String userEmail, userPRN, userType;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
-    String bodyAche, chestPain, breathingDifficulty, dryCough, fever, headache, runnyNose, soreThroat,tiredness, none;
+    String bodyAche, chestPain, breathingDifficulty, dryCough, fever, headache, runnyNose, soreThroat, tiredness, none;
     String contactWithPatient, travelledContainmentZone, affectedRegion;
-    String question,symptom;
+    String question, symptom;
     ProgressBar progressBar;
     TextView dateTextView;
 
@@ -91,33 +91,32 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
 
         final Intent intent = getIntent();
         userType = intent.getStringExtra("userType");
-        Log.i(TAG, "onCreate: UserType: "+userType);
+        Log.i(TAG, "onCreate: UserType: " + userType);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        switch (userType)
-        {
+        switch (userType) {
             case "Student":
-                userType="Students";
+                userType = "Students";
                 DatabaseReference studentDatabaseReference = ref.child("Students");
                 studentDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                                for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
-                                                                                    String email = studentSnapshot.child("Email").getValue(String.class);
-                                                                                    Log.i(TAG, "onDataChange: student email : " + email);
-                                                                                    if (email.equalsIgnoreCase(userEmail)) {
-                                                                                        userPRN = studentSnapshot.child("PRN").getValue(String.class);
-                                                                                        Log.i(TAG, "onDataChange: matched student PRN : " + userPRN);
-                                                                                        break;
-                                                                                    }
-                                                                                }
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
+                            String email = studentSnapshot.child("Email").getValue(String.class);
+                            Log.i(TAG, "onDataChange: student email : " + email);
+                            if (email.equalsIgnoreCase(userEmail)) {
+                                userPRN = studentSnapshot.child("PRN").getValue(String.class);
+                                Log.i(TAG, "onDataChange: matched student PRN : " + userPRN);
+                                break;
+                            }
+                        }
 
-                                                                            }
+                    }
 
-                                                                            @Override
-                                                                            public void onCancelled(@NonNull DatabaseError error) {
-                                                                                Log.e(TAG, error.getMessage());
-                                                                            }
-                                                                        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, error.getMessage());
+                    }
+                });
                 break;
             case "Faculty":
                 DatabaseReference facultyDatabaseReference = ref.child("Faculty");
@@ -144,40 +143,40 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                 break;
             case "Non Teaching Staff":
                 userType = "Non_teaching";
-            DatabaseReference non_teachingDatabaseReference = ref.child("Non_teaching");
-            non_teachingDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
-                        String email = studentSnapshot.child("Email").getValue(String.class);
-                        Log.i(TAG, "onDataChange: student email : " + email);
-                        if (email.equalsIgnoreCase(userEmail)) {
-                            userPRN = studentSnapshot.child("Employee ID").getValue(String.class);
-                            Log.i(TAG, "onDataChange: matched student PRN : " + userPRN);
-                            break;
+                DatabaseReference non_teachingDatabaseReference = ref.child("Non_teaching");
+                non_teachingDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
+                            String email = studentSnapshot.child("Email").getValue(String.class);
+                            Log.i(TAG, "onDataChange: student email : " + email);
+                            if (email.equalsIgnoreCase(userEmail)) {
+                                userPRN = studentSnapshot.child("Employee ID").getValue(String.class);
+                                Log.i(TAG, "onDataChange: matched student PRN : " + userPRN);
+                                break;
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e(TAG, error.getMessage());
-                }
-            });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, error.getMessage());
+                    }
+                });
 
         }
-                    scheduleAlarm();
+        scheduleAlarm();
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
         updateValuesFromBundle(savedInstanceState);
 
-        userLocation = new UserLocation(latitude,longitude);
+        userLocation = new UserLocation(latitude, longitude);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         userEmail = currentUser.getEmail();
 
-        Log.i(TAG, "onCreate: Current user: "+userEmail);
+        Log.i(TAG, "onCreate: Current user: " + userEmail);
         checkLocationPermission();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -201,8 +200,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                                     mCurrentLocation = location;
                                     Log.i(TAG, "Location achieved!");
                                     updateLocationToDatabase(mCurrentLocation);
-                                }
-                                else {
+                                } else {
                                     Log.i(TAG, "No location :(");
                                 }
                             }
@@ -260,7 +258,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                     editor.apply();
                     Toast.makeText(NormalUserActivity.this, "You have been signed out successfully!",
                             Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(NormalUserActivity.this,MainActivity.class);
+                    Intent intent = new Intent(NormalUserActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 } else
@@ -280,43 +278,34 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                 RadioGroup q1 = findViewById(R.id.q1_radio_group);
                 ScrollView scrollView = findViewById(R.id.scroll_view);
                 boolean toSubmit = true;
-                if(q1.getCheckedRadioButtonId() == -1)
-                {
+                if (q1.getCheckedRadioButtonId() == -1) {
                     //not answered
                     scrollView.fullScroll(ScrollView.FOCUS_UP);
                     q1.requestFocus();
                     toSubmit = false;
-                }
-                else
-                {
+                } else {
                     //go ahead
                     RadioButton checkedButton = findViewById(q1.getCheckedRadioButtonId());
                     affectedRegion = checkedButton.getText().toString();
                 }
                 RadioGroup q2 = findViewById(R.id.q2_radio_group);
-                if(q2.getCheckedRadioButtonId() == -1)
-                {
+                if (q2.getCheckedRadioButtonId() == -1) {
                     //not answered
                     scrollView.fullScroll(ScrollView.FOCUS_UP);
                     q2.requestFocus();
-                    toSubmit =false;
-                }
-                else
-                {
+                    toSubmit = false;
+                } else {
                     //go ahead
                     RadioButton checkedButton = findViewById(q2.getCheckedRadioButtonId());
                     travelledContainmentZone = checkedButton.getText().toString();
                 }
                 RadioGroup q3 = findViewById(R.id.q3_radio_group);
-                if(q3.getCheckedRadioButtonId() == -1)
-                {
+                if (q3.getCheckedRadioButtonId() == -1) {
                     //not answered
                     scrollView.fullScroll(ScrollView.FOCUS_UP);
                     q3.requestFocus();
                     toSubmit = false;
-                }
-                else
-                {
+                } else {
                     //go ahead
                     RadioButton checkedButton = findViewById(q3.getCheckedRadioButtonId());
                     contactWithPatient = checkedButton.getText().toString();
@@ -333,16 +322,13 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                 CheckBox cb8 = findViewById(R.id.checkbox_sore_throat);
                 CheckBox cb9 = findViewById(R.id.checkbox_tiredness);
                 CheckBox cb10 = findViewById(R.id.checkbox_none);
-                if(!(cb1.isChecked() || cb2.isChecked() || cb3.isChecked() || cb4.isChecked() || cb5.isChecked() ||
-                        cb6.isChecked() || cb7.isChecked() || cb8.isChecked() || cb9.isChecked() || cb10.isChecked()))
-                {
+                if (!(cb1.isChecked() || cb2.isChecked() || cb3.isChecked() || cb4.isChecked() || cb5.isChecked() ||
+                        cb6.isChecked() || cb7.isChecked() || cb8.isChecked() || cb9.isChecked() || cb10.isChecked())) {
                     //nothing checked
                     LinearLayout symptomLayout = findViewById(R.id.symptoms_layout);
                     symptomLayout.requestFocus();
                     toSubmit = false;
-                }
-                else
-                {
+                } else {
                     //go ahead
                     bodyAche = cb1.isChecked() ? "Yes" : "No";
                     chestPain = cb2.isChecked() ? "Yes" : "No";
@@ -356,8 +342,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                     none = cb10.isChecked() ? "Yes" : "No";
                 }
 
-                if(toSubmit)
-                {
+                if (toSubmit) {
                     //all OK, submit now
                     progressBar.setVisibility(View.VISIBLE);
                     DateUtils date = new DateUtils();
@@ -365,159 +350,165 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
 
                     //q1
                     question = "Have you been in contact with a confirmed novel coronavirus (nCoV) patient in the past 14 days?";
-                    String dateString = "/"+date.getYear()+"/"+date.getMonth()+"/"+date.getDate();
-                    String pathString = dateString+"/"+question+"/"+userType;
+                    String dateString = "/" + date.getYear() + "/" + date.getMonth() + "/" + date.getDate();
+                    String pathString = dateString + "/" + question + "/" + userType;
                     DatabaseReference ref = dailyAssessmentReference.child(pathString);
 
-                    HashMap<String,String> map = new HashMap<>();
-                    map.put(userPRN,contactWithPatient);
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(userPRN, contactWithPatient);
                     ref.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+question + ":" + contactWithPatient);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + question + ":" + contactWithPatient);
                         }
                     });
 
                     //q2
                     question = "Have you been to any affected countries or regions or towns in the past 14 days?";
-                    pathString = dateString+"/"+question+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map1 = new HashMap<>();
-                    map1.put(userPRN,affectedRegion);
+                    HashMap<String, String> map1 = new HashMap<>();
+                    map1.put(userPRN, affectedRegion);
                     ref.setValue(map1).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+question + ":" + affectedRegion);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + question + ":" + affectedRegion);
                         }
                     });
 
                     //q3
                     question = "Have you traveled anywhere from Containment Zone of COVID-19 in last 28-45 days?";
-                    pathString = dateString+"/"+question+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map2= new HashMap<>();
-                    map2.put(userPRN,travelledContainmentZone);
+                    HashMap<String, String> map2 = new HashMap<>();
+                    map2.put(userPRN, travelledContainmentZone);
                     ref.setValue(map2).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+question + ":" + travelledContainmentZone);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + question + ":" + travelledContainmentZone);
                         }
                     });
 
                     //symptoms
                     question = "Symptoms";
                     symptom = "Body aches or muscle pain";
-                    pathString = dateString+"/"+question+"/"+symptom+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + symptom + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map3= new HashMap<>();
-                    map3.put(userPRN,bodyAche);
+                    HashMap<String, String> map3 = new HashMap<>();
+                    map3.put(userPRN, bodyAche);
                     ref.setValue(map3).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+symptom + ":" + bodyAche);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + symptom + ":" + bodyAche);
                         }
                     });
 
                     symptom = "Chest pain";
-                    pathString = dateString+"/"+question+"/"+symptom+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + symptom + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map4= new HashMap<>();
-                    map4.put(userPRN,chestPain);
+                    HashMap<String, String> map4 = new HashMap<>();
+                    map4.put(userPRN, chestPain);
                     ref.setValue(map4).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+symptom + ":" + chestPain);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + symptom + ":" + chestPain);
                         }
                     });
 
                     symptom = "Difficulty in breathing";
-                    pathString = dateString+"/"+question+"/"+symptom+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + symptom + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map5= new HashMap<>();
-                    map5.put(userPRN,breathingDifficulty);
+                    HashMap<String, String> map5 = new HashMap<>();
+                    map5.put(userPRN, breathingDifficulty);
                     ref.setValue(map5).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+symptom + ":" + breathingDifficulty);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + symptom + ":" + breathingDifficulty);
                         }
                     });
 
                     symptom = "Dry cough";
-                    pathString = dateString+"/"+question+"/"+symptom+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + symptom + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map6= new HashMap<>();
-                    map6.put(userPRN,dryCough);
+                    HashMap<String, String> map6 = new HashMap<>();
+                    map6.put(userPRN, dryCough);
                     ref.setValue(map6).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+symptom + ":" + dryCough);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + symptom + ":" + dryCough);
                         }
                     });
 
                     symptom = "Fever";
-                    pathString = dateString+"/"+question+"/"+symptom+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + symptom + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map7= new HashMap<>();
-                    map7.put(userPRN,fever);
+                    HashMap<String, String> map7 = new HashMap<>();
+                    map7.put(userPRN, fever);
                     ref.setValue(map7).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+symptom + ":" + fever);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + symptom + ":" + fever);
                         }
                     });
 
                     symptom = "Headaches";
-                    pathString = dateString+"/"+question+"/"+symptom+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + symptom + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map8= new HashMap<>();
-                    map8.put(userPRN,headache);
+                    HashMap<String, String> map8 = new HashMap<>();
+                    map8.put(userPRN, headache);
                     ref.setValue(map8).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+symptom + ":" + headache);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + symptom + ":" + headache);
                         }
                     });
 
                     symptom = "Runny nose";
-                    pathString = dateString+"/"+question+"/"+symptom+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + symptom + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map9= new HashMap<>();
-                    map9.put(userPRN,runnyNose);
+                    HashMap<String, String> map9 = new HashMap<>();
+                    map9.put(userPRN, runnyNose);
                     ref.setValue(map9).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+symptom + ":" + runnyNose);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + symptom + ":" + runnyNose);
                         }
                     });
 
                     symptom = "Sore throat";
-                    pathString = dateString+"/"+question+"/"+symptom+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + symptom + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map10= new HashMap<>();
-                    map10.put(userPRN,soreThroat);
+                    HashMap<String, String> map10 = new HashMap<>();
+                    map10.put(userPRN, soreThroat);
                     ref.setValue(map10).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+symptom + ":" + soreThroat);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + symptom + ":" + soreThroat);
                         }
                     });
 
                     symptom = "Tiredness";
-                    pathString = dateString+"/"+question+"/"+symptom+"/"+userType;
+                    pathString = dateString + "/" + question + "/" + symptom + "/" + userType;
                     ref = dailyAssessmentReference.child(pathString);
-                    HashMap<String,String> map11= new HashMap<>();
-                    map11.put(userPRN,tiredness);
+                    HashMap<String, String> map11 = new HashMap<>();
+                    map11.put(userPRN, tiredness);
                     ref.setValue(map11).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: "+userPRN+" : "+symptom + ":" + tiredness);
+                            Log.i(TAG, "onComplete: " + userPRN + " : " + symptom + ":" + tiredness);
                             progressBar.setVisibility(View.GONE);
                         }
                     });
 
                     Log.i(TAG, "onClick: All uploaded!");
                     Toast.makeText(NormalUserActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-                    Intent intent1 = new Intent(NormalUserActivity.this,GuidelinesActivity.class);
+                    //write to SharedPreferences as filled daily assessment
+                    SharedPreferences preferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("dailyAssessmentStatus","filled");
+                    editor.apply();
+                    editor.commit();
+                    Intent intent1 = new Intent(NormalUserActivity.this, GuidelinesActivity.class);
                     startActivity(intent1);
                     finish();
                 }
@@ -532,41 +523,39 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
         Log.i("Location info: Lng", Double.toString(longitude));
         final String[] prn = new String[1];
 
-        userLocation = new UserLocation(latitude,longitude);
+        userLocation = new UserLocation(latitude, longitude);
         DatabaseReference studentDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference("Students");
         studentDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot studentSnapshot : snapshot.getChildren())
-                {
+                for (DataSnapshot studentSnapshot : snapshot.getChildren()) {
                     String email = studentSnapshot.child("Email").getValue(String.class);
-                    Log.i(TAG, "onDataChange: student email : "+email);
-                    if(email.equalsIgnoreCase(userEmail))
-                    {
+                    Log.i(TAG, "onDataChange: student email : " + email);
+                    if (email.equalsIgnoreCase(userEmail)) {
                         userPRN = studentSnapshot.child("PRN").getValue(String.class);
                         prn[0] = userPRN;
-                        Log.i(TAG, "onDataChange: matched student PRN : "+userPRN);
+                        Log.i(TAG, "onDataChange: matched student PRN : " + userPRN);
                         break;
                     }
                 }
 
-                Log.i(TAG, "updateLocationToDatabase: prn[0]: "+prn[0]);
+                Log.i(TAG, "updateLocationToDatabase: prn[0]: " + prn[0]);
 
-                if (prn[0]!=null) {
+                if (prn[0] != null) {
                     DatabaseReference userLocationDatabaseReference = FirebaseDatabase.getInstance()
                             .getReference("Students").child(prn[0]);
                     userLocationDatabaseReference.child("Current Location").setValue(userLocation)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "onComplete: Location saved successfully!");
-                        }
-                    });
-                }
-                else
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Log.i(TAG, "onComplete: Location saved successfully!");
+                                }
+                            });
+                } else
                     Log.i(TAG, "updateLocationToDatabase: PRN not found");
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, error.getMessage());
@@ -587,8 +576,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION:
-                {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -638,8 +626,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)
-        {
+                != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -732,110 +719,91 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
         boolean checked = ((CheckBox) view).isChecked();
 
         // Check which checkbox was clicked
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.checkbox_body_ache:
-                if (checked)
-                {
-                    CheckBox cb =  findViewById(R.id.checkbox_none);
+                if (checked) {
+                    CheckBox cb = findViewById(R.id.checkbox_none);
                     cb.setChecked(false);
                     bodyAche = "Yes";
-                }
-                else
+                } else
                     bodyAche = "No";
 
                 break;
             case R.id.checkbox_chest_pain:
-                if (checked)
-                {
-                    CheckBox cb =  findViewById(R.id.checkbox_none);
+                if (checked) {
+                    CheckBox cb = findViewById(R.id.checkbox_none);
                     cb.setChecked(false);
                     chestPain = "Yes";
-                }
-                else
+                } else
                     chestPain = "No";
 
                 break;
             case R.id.checkbox_breathing:
-                if (checked)
-                {
-                    CheckBox cb =  findViewById(R.id.checkbox_none);
+                if (checked) {
+                    CheckBox cb = findViewById(R.id.checkbox_none);
                     cb.setChecked(false);
-                    breathingDifficulty ="Yes";
-                }
-                else
+                    breathingDifficulty = "Yes";
+                } else
                     breathingDifficulty = "No";
 
-                    break;
+                break;
             case R.id.checkbox_dry_cough:
-                if (checked)
-                {
-                    CheckBox cb =  findViewById(R.id.checkbox_none);
+                if (checked) {
+                    CheckBox cb = findViewById(R.id.checkbox_none);
                     cb.setChecked(false);
                     dryCough = "Yes";
-                }
-                else
+                } else
                     dryCough = "No";
 
-                    break;
+                break;
             case R.id.checkbox_fever:
-                if (checked)
-                {
-                    CheckBox cb =  findViewById(R.id.checkbox_none);
+                if (checked) {
+                    CheckBox cb = findViewById(R.id.checkbox_none);
                     cb.setChecked(false);
                     fever = "Yes";
-                }
-                else
-                    fever ="No";
+                } else
+                    fever = "No";
 
-                    break;
+                break;
             case R.id.checkbox_headache:
-                if (checked)
-                {
-                    CheckBox cb =  findViewById(R.id.checkbox_none);
+                if (checked) {
+                    CheckBox cb = findViewById(R.id.checkbox_none);
                     cb.setChecked(false);
                     headache = "Yes";
-                }
-                else
+                } else
                     headache = "No";
 
-                    break;
+                break;
             case R.id.checkbox_runny_nose:
-                if (checked)
-                {
-                    CheckBox cb =  findViewById(R.id.checkbox_none);
+                if (checked) {
+                    CheckBox cb = findViewById(R.id.checkbox_none);
                     cb.setChecked(false);
                     runnyNose = "Yes";
-                }
-                else
+                } else
                     runnyNose = "No";
 
-                    break;
+                break;
             case R.id.checkbox_sore_throat:
-                if (checked)
-                {
-                    CheckBox cb =  findViewById(R.id.checkbox_none);
+                if (checked) {
+                    CheckBox cb = findViewById(R.id.checkbox_none);
                     cb.setChecked(false);
                     soreThroat = "Yes";
-                }
-                else
+                } else
                     soreThroat = "No";
 
-                    break;
+                break;
             case R.id.checkbox_tiredness:
-                if (checked)
-                {
-                    CheckBox cb =  findViewById(R.id.checkbox_none);
+                if (checked) {
+                    CheckBox cb = findViewById(R.id.checkbox_none);
                     cb.setChecked(false);
                     tiredness = "Yes";
-                }
-                else
+                } else
                     tiredness = "No";
 
-                    break;
+                break;
 
             case R.id.checkbox_none:
-                if (checked)
-                {
+                if (checked) {
                     CheckBox cb1 = findViewById(R.id.checkbox_body_ache);
                     cb1.setChecked(false);
                     CheckBox cb2 = findViewById(R.id.checkbox_chest_pain);
@@ -855,8 +823,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                     CheckBox cb9 = findViewById(R.id.checkbox_tiredness);
                     cb9.setChecked(false);
                     none = "Yes";
-                }
-                else
+                } else
                     none = "No";
                 break;
         }
@@ -865,7 +832,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
     private void scheduleAlarm() {
         Intent alarmIntent = new Intent(this, AlarmReceiver.class);
         alarmIntent.putExtra("data", "Please fill daily assessment form");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent,PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         long afterTwoMinutes = SystemClock.elapsedRealtime() + 2 * 60 * 1000;

@@ -204,6 +204,7 @@ public class StateUsersActivity extends AppCompatActivity {
             }
         });
 
+
         progressBar.setVisibility(View.GONE);
 
         usersList.clear();
@@ -223,6 +224,5 @@ public class StateUsersActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 }
