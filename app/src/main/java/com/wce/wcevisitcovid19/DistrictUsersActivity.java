@@ -65,8 +65,7 @@ public class DistrictUsersActivity extends AppCompatActivity
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
-
-                    userId = studentSnapshot.getValue(String.class);
+                    final String userId = studentSnapshot.getValue(String.class);
                     DatabaseReference studNameDatabaseReference = dbRef.child("Students").child(userId).child("Name");
                     studNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -102,7 +101,7 @@ public class DistrictUsersActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot facultySnapshot : dataSnapshot.getChildren()) {
 
-                    userId = facultySnapshot.getValue(String.class);
+                    final String userId = facultySnapshot.getValue(String.class);
                     DatabaseReference facultyNameDatabaseReference = dbRef.child("Faculty").child(userId).child("Name");
                     facultyNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -121,10 +120,6 @@ public class DistrictUsersActivity extends AppCompatActivity
                             Log.e("error", error.getMessage());
                         }
                     });
-
-
-
-
                 }
             }
 
@@ -142,7 +137,7 @@ public class DistrictUsersActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot nonTeachingSnapshot : dataSnapshot.getChildren()) {
 
-                    userId = nonTeachingSnapshot.getValue(String.class);
+                    final String userId = nonTeachingSnapshot.getValue(String.class);
                     DatabaseReference facultyNameDatabaseReference = dbRef.child("Non_teaching").child(userId).child("Name");
                     facultyNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -162,9 +157,6 @@ public class DistrictUsersActivity extends AppCompatActivity
                         }
                     });
 
-
-
-
                 }
             }
 
@@ -182,7 +174,7 @@ public class DistrictUsersActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot outsiderSnapshot : dataSnapshot.getChildren()) {
 
-                    userId = outsiderSnapshot.getValue(String.class);
+                    final String userId = outsiderSnapshot.getValue(String.class);
                     DatabaseReference outsiderNameDatabaseReference = dbRef.child("Outsiders").child(userId).child("Name");
                     outsiderNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -202,9 +194,6 @@ public class DistrictUsersActivity extends AppCompatActivity
                         }
                     });
 
-
-
-
                 }
             }
 
@@ -214,8 +203,12 @@ public class DistrictUsersActivity extends AppCompatActivity
             }
         });
 
-
         progressBar.setVisibility(View.GONE);
+
+        userTypeList.clear();
+        usersList.clear();
+        userIdList.clear();
+
 
         districtUsersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -231,7 +224,5 @@ public class DistrictUsersActivity extends AppCompatActivity
             }
         }  );
 
-        userListAdapter.clear();
-        usersList.clear();
     }
 }
