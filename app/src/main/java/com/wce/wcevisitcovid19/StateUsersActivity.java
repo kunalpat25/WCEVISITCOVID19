@@ -101,7 +101,7 @@ public class StateUsersActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot facultySnapshot : dataSnapshot.getChildren()) {
 
-                    userId = facultySnapshot.getValue(String.class);
+                    final String userId = facultySnapshot.getValue(String.class);
                     DatabaseReference facultyNameDatabaseReference = dbRef.child("Faculty").child(userId).child("Name");
                     facultyNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -138,7 +138,7 @@ public class StateUsersActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot nonTeachingSnapshot : dataSnapshot.getChildren()) {
 
-                    userId = nonTeachingSnapshot.getValue(String.class);
+                    final String userId = nonTeachingSnapshot.getValue(String.class);
                     DatabaseReference facultyNameDatabaseReference = dbRef.child("Non_teaching").child(userId).child("Name");
                     facultyNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -175,7 +175,7 @@ public class StateUsersActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot outsiderSnapshot : dataSnapshot.getChildren()) {
 
-                    userId = outsiderSnapshot.getValue(String.class);
+                    final String userId = outsiderSnapshot.getValue(String.class);
                     DatabaseReference outsiderNameDatabaseReference = dbRef.child("Outsiders").child(userId).child("Name");
                     outsiderNameDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -204,8 +204,11 @@ public class StateUsersActivity extends AppCompatActivity {
             }
         });
 
-
         progressBar.setVisibility(View.GONE);
+
+        usersList.clear();
+        userIdList.clear();
+        userTypeList.clear();
 
         stateUsersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -221,7 +224,5 @@ public class StateUsersActivity extends AppCompatActivity {
             }
         });
 
-        usersList.clear();
-        userListAdapter.clear();
     }
 }
