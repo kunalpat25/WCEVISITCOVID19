@@ -518,7 +518,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                     Log.i(TAG, "onClick: All uploaded!");
                     Toast.makeText(NormalUserActivity.this, "Success!", Toast.LENGTH_SHORT).show();
                     Intent intent1 = new Intent(NormalUserActivity.this,GuidelinesActivity.class);
-                    startActivity(intent);
+                    startActivity(intent1);
                     finish();
                 }
             }

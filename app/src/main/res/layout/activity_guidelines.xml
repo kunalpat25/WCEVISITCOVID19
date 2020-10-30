@@ -1,20 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GuidelinesActivity">
+    android:padding="8dp"
+    android:fillViewport="true">
 
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="376dp"
-        android:text="Covid19 Guidelines"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="@string/covid19guidelines"
+            android:textAlignment="center"
+            android:paddingBottom="10dp"
+            android:textSize="30dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/guideline3"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:justificationMode="inter_word"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="20dp"
+            android:layout_marginTop="15dp"
+            />
+        <TextView
+            android:id="@+id/textview1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:justificationMode="inter_word"
+            android:textColor="@android:color/background_dark"
+            android:text="@string/guideline4"
+            android:textSize="23dp" />
+
+        <TextView
+            android:id="@+id/textview2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="left"
+            android:justificationMode="inter_word"
+            android:padding="9dp"
+            android:text="@string/guidelines1"
+            android:textSize="22dp" />
+        <TextView
+            android:id="@+id/textview3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="6dp"
+            android:text="NOTE:"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="22dp" />
+        <TextView
+            android:id="@+id/textview4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="9dp"
+            android:layout_gravity="left"
+            android:justificationMode="inter_word"
+            android:text="@string/guidelines2"
+            android:textSize="21dp" />
+        <TextView
+            android:id="@+id/textview5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="6dp"
+            android:text="MASKS:"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="21dp" />
+        <TextView
+            android:id="@+id/textview6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="left"
+            android:justificationMode="inter_word"
+            android:padding="9dp"
+            android:text="@string/aboutmasks"
+            android:textSize="21dp" />
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@android:color/background_light"
+            android:orientation="vertical"
+            >
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="EXIT"
+                android:onClick="Exit"
+                />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
