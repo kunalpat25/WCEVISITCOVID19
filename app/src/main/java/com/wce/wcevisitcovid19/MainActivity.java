@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         //checking already logged in user
         if (checkUserLoginStatus(this)) {
-            String typeOfUser = getUserType(this);
+            final String typeOfUser = getUserType(this);
             if (typeOfUser.equals("Admin")) {
 
                 adminDatabaseReference.addValueEventListener(new ValueEventListener() {
@@ -106,7 +106,9 @@ public class MainActivity extends AppCompatActivity {
                         if (flag) {
                             Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
                             progressBar.setVisibility(View.GONE);
+                            intent.putExtra("userType",typeOfUser);
                             startActivity(intent);
+                            finish();
                         }
                     }
 
@@ -115,32 +117,27 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("error", error.getMessage());
                     }
                 });
-            }
-            else //Normal User is logged in
-                {
+            } else //Normal User is logged in
+            {
                 String dailyAssessmentFilledStatus = sharedPreferences.getString("dailyAssessmentStatus", null);
-                if ("filled".equals(dailyAssessmentFilledStatus))
-                {
+                if ("filled".equals(dailyAssessmentFilledStatus)) {
                     //if filled
                     //show Guideline Activity
                     progressBar.setVisibility(View.GONE);
                     Intent intent = new Intent(MainActivity.this, GuidelinesActivity.class);
                     startActivity(intent);
-                }
-                else
-                    {
-                        //else not filled
-                        //show NormalUser activity
+                    finish();
+                } else {
+                    //else not filled
+                    //show NormalUser activity
                     progressBar.setVisibility(View.GONE);
                     Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
+                    intent.putExtra("userType",typeOfUser);
                     startActivity(intent);
-
+                    finish();
                 }
-
-
             }
-        }
-        else
+        } else
             progressBar.setVisibility(View.GONE);
 
 
@@ -193,17 +190,17 @@ public class MainActivity extends AppCompatActivity {
                                                 // there was an error
                                                 if (password.length() < 6) {
                                                     inputPassword.setError(getString(R.string.minimum_password));
-                                                    progressBar.setVisibility(View.GONE);
                                                 } else {
                                                     Toast.makeText(MainActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
-                                                    progressBar.setVisibility(View.GONE);
                                                 }
+                                                progressBar.setVisibility(View.GONE);
                                             } else {
                                                 //Login successful
                                                 editor.putString("loginStatus", "loggedIn");
                                                 editor.putString("email", emailID);
                                                 editor.putString("userType", userType);
                                                 editor.apply();
+                                                editor.commit();
                                                 //For testing purpose
                                                 progressBar.setVisibility(View.GONE);
                                                 Toast.makeText(MainActivity.this, "Signed In successfully!", Toast.LENGTH_SHORT).show();
@@ -248,7 +245,11 @@ public class MainActivity extends AppCompatActivity {
                                                 if (isNormalUser) {
                                                     Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
                                                     intent.putExtra("userType", userType);
+                                                    editor.putString("userType", userType);
+                                                    editor.apply();
+                                                    editor.commit();
                                                     startActivity(intent);
+                                                    finish();
                                                 }
                                             }
                                         }
@@ -256,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-//
                     }
                 }
             }
