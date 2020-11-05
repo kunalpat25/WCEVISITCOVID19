@@ -59,6 +59,7 @@ import com.wce.wcevisitcovid19.models.UserLocation;
 import com.wce.wcevisitcovid19.utils.AlarmReceiver;
 import com.wce.wcevisitcovid19.utils.DateUtils;
 
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class NormalUserActivity extends AppCompatActivity implements LocationListener {
@@ -89,8 +90,28 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_normal_user);
 
+        //sets alarm for 10 am to send notification
+        //TODO: set the exact time to start sending notifications in morning
+        long alarmTime = 10*60*60*1000; //for testing take 10 seconds, 10 * 1000
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
+        String status = preferences.getString("dailyAssessmentStatus",null);
+        if(!("filled".equals(status))) {
+            AlarmReceiver.scheduleAlarm(alarmTime, "notify", PendingIntent.FLAG_UPDATE_CURRENT,getApplicationContext());
+        }
+
+        //sets alarm for 9:40 am to reset the dailyAssessmentStatus in SharedPreferences
+        //TODO: set the exact time to reset flag in SharedPreferences
+        alarmTime =9*60*60*1000 + 40*60*1000 ; //for testing should be 60 * 1000
+        AlarmReceiver.scheduleAlarm(alarmTime,"stop",PendingIntent.FLAG_ONE_SHOT,getApplicationContext());
+
         final Intent intent = getIntent();
-        userType = intent.getStringExtra("userType");
+        try {
+            userType = intent.getStringExtra("userType");
+        }
+        catch (Exception e)
+        {
+            userType = preferences.getString("userType",null);
+        }
         Log.i(TAG, "onCreate: UserType: " + userType);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         switch (userType) {
@@ -165,7 +186,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                 });
 
         }
-        scheduleAlarm();
+
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
@@ -505,7 +526,7 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
                     //write to SharedPreferences as filled daily assessment
                     SharedPreferences preferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("dailyAssessmentStatus","filled");
+                    editor.putString("dailyAssessmentStatus", "filled");
                     editor.apply();
                     editor.commit();
                     Intent intent1 = new Intent(NormalUserActivity.this, GuidelinesActivity.class);
@@ -829,21 +850,4 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
         }
     }
 
-    private void scheduleAlarm() {
-        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
-        alarmIntent.putExtra("data", "Please fill daily assessment form");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        long afterTwoMinutes = SystemClock.elapsedRealtime() + 2 * 60 * 1000;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            alarmManager.setExactAndAllowWhileIdle
-                    (AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                            afterTwoMinutes, pendingIntent);
-        else
-            alarmManager.setExact
-                    (AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                            afterTwoMinutes, pendingIntent);
-    }
 }
