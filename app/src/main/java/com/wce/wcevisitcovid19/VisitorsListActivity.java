@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wce.wcevisitcovid19.adapters.VisitorsListAdapter;
+import com.wce.wcevisitcovid19.models.Visitor;
 import com.wce.wcevisitcovid19.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -33,10 +35,11 @@ public class VisitorsListActivity extends AppCompatActivity {
     private static final String TAG = "VisitorsListActivity";
     EditText editVisitDate;
     ListView  visitorsListView;
-    ArrayList<String> outsiderNamesList = new ArrayList<>();
-    ArrayList<String> locationOfVisitList = new ArrayList<>();
-    ArrayList<String> outsiderDatesOfVisitList = new ArrayList<>();
+//    ArrayList<String> outsiderNamesList = new ArrayList<>();
+//    ArrayList<String> locationOfVisitList = new ArrayList<>();
+//    ArrayList<String> outsiderDatesOfVisitList = new ArrayList<>();
     ArrayList<String> outsiderIdList = new ArrayList<>();
+    ArrayList<Visitor> visitorsList = new ArrayList<>();
     final Calendar myCalendar = Calendar.getInstance();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     VisitorsListAdapter visitorsListAdapter;
@@ -44,6 +47,7 @@ public class VisitorsListActivity extends AppCompatActivity {
     String outsiderId;
     TextView countTextView,infoTextView;
     String count;
+    SearchView searchView;
 
     //trial
 //    ArrayList<String> namesList = new ArrayList<>();
@@ -56,8 +60,10 @@ public class VisitorsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visitors_list);
 
+        getSupportActionBar().setTitle(getString(R.string.visitors));
+
         visitorsListView = findViewById(R.id.visitorsListView);
-        visitorsListAdapter = new VisitorsListAdapter(this, outsiderNamesList, locationOfVisitList);
+        visitorsListAdapter = new VisitorsListAdapter(this,visitorsList);
         visitorsListView.setAdapter(visitorsListAdapter);
 
         countTextView = findViewById(R.id.display_count_text_view);
@@ -76,6 +82,21 @@ public class VisitorsListActivity extends AppCompatActivity {
         editVisitDate = findViewById(R.id.edit_visit_date);
         visitDate = d + "/" + m + "/" + calendar.get(Calendar.YEAR);
         editVisitDate.setHint(visitDate);
+
+        searchView = findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                visitorsListAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                visitorsListAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
 
         //trying to reduce data fetching time and implement re-usability
         //thereby increasing space consumption on device's RAM
@@ -102,17 +123,18 @@ public class VisitorsListActivity extends AppCompatActivity {
                     DatabaseReference outsiderDatabaseReference;
                     for (String id : outsiderIdList)
                     {
-                        outsiderId = id;
-                        outsiderDatabaseReference = database.getReference("Outsiders").child(outsiderId);
+                        final String finalOutsiderId = id;
+                        outsiderDatabaseReference = database.getReference("Outsiders").child(finalOutsiderId);
                         outsiderDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-                                String dateOfVisit = postSnapshot.child("Date of visit").getValue(String.class);
+//                                String dateOfVisit = postSnapshot.child("Date of visit").getValue(String.class);
                                 String outsiderName = postSnapshot.child("Name").getValue(String.class);
                                 String locationOfVisit = postSnapshot.child("Location of visit").getValue(String.class);
-                                outsiderDatesOfVisitList.add(dateOfVisit);
-                                outsiderNamesList.add(outsiderName);
-                                locationOfVisitList.add(locationOfVisit);
+                                Log.i(TAG, "onDataChange: finalOutsiderId : "+finalOutsiderId);
+                                Log.i(TAG, "onDataChange: name: "+outsiderName);
+                                visitorsList.add(new Visitor(finalOutsiderId,outsiderName,locationOfVisit));
+                                Log.i(TAG, "onDataChange: Visitor added: "+outsiderName);
                                 visitorsListAdapter.notifyDataSetChanged();
                             }
 
@@ -129,7 +151,6 @@ public class VisitorsListActivity extends AppCompatActivity {
                     Log.i(TAG, "onDataChange: No data found for date " + visitDate);
                 }
             }
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -243,9 +264,10 @@ public class VisitorsListActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s)
             {
                 Log.i(TAG, "afterTextChanged: Now date changed: "+visitDate);
-                outsiderNamesList.clear();
-                locationOfVisitList.clear();
+//                outsiderNamesList.clear();
+//                locationOfVisitList.clear();
                 outsiderIdList.clear();
+                visitorsList.clear();
                 visitorsListAdapter.notifyDataSetChanged();
 
                 //trying to reduce time and data to fetch from firebase more
@@ -272,17 +294,20 @@ public class VisitorsListActivity extends AppCompatActivity {
                             DatabaseReference outsiderDatabaseReference;
                             for (String id : outsiderIdList)
                             {
-                                outsiderId = id;
-                                outsiderDatabaseReference = database.getReference("Outsiders").child(outsiderId);
+                                final String finalOutsiderId = id;
+                                outsiderDatabaseReference = database.getReference("Outsiders").child(finalOutsiderId);
                                 outsiderDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-                                        String dateOfVisit = postSnapshot.child("Date of visit").getValue(String.class);
+//                                        String dateOfVisit = postSnapshot.child("Date of visit").getValue(String.class);
                                         String outsiderName = postSnapshot.child("Name").getValue(String.class);
                                         String locationOfVisit = postSnapshot.child("Location of visit").getValue(String.class);
-                                        outsiderDatesOfVisitList.add(dateOfVisit);
-                                        outsiderNamesList.add(outsiderName);
-                                        locationOfVisitList.add(locationOfVisit);
+//                                        outsiderDatesOfVisitList.add(dateOfVisit);
+//                                        outsiderNamesList.add(outsiderName);
+//                                        locationOfVisitList.add(locationOfVisit);
+                                        Log.i(TAG, "onDataChange: finalOutsiderId : "+finalOutsiderId);
+                                        Log.i(TAG, "onDataChange: name: "+outsiderName);
+                                        visitorsList.add(new Visitor(finalOutsiderId,outsiderName,locationOfVisit));
                                         visitorsListAdapter.notifyDataSetChanged();
                                     }
 
@@ -355,9 +380,11 @@ public class VisitorsListActivity extends AppCompatActivity {
         visitorsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String userName = outsiderNamesList.get(position);
+                String userName = visitorsList.get(position).getName();
                 String userType = "Outsiders";
-                String userId = outsiderIdList.get(position);
+//                String userId = outsiderIdList.get(position);
+                String userId = visitorsList.get(position).getId();
+                Log.i(TAG, "onItemClick: userId: "+userId + userName);
                 Intent intent = new Intent(VisitorsListActivity.this,UserDetailsActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("userType",userType);
@@ -367,7 +394,8 @@ public class VisitorsListActivity extends AppCompatActivity {
         }  );
 
         outsiderIdList.clear();
-        outsiderNamesList.clear();
-        locationOfVisitList.clear();
+//        outsiderNamesList.clear();
+//        locationOfVisitList.clear();
+        visitorsList.clear();
     }
 }

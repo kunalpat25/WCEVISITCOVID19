@@ -90,7 +90,15 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
         setContentView(R.layout.activity_normal_user);
 
         final Intent intent = getIntent();
-        userType = intent.getStringExtra("userType");
+
+        try {
+            userType = intent.getStringExtra("userType");
+        }
+        catch (Exception e)
+        {
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
+            userType = sharedPreferences.getString("userType",null);
+        }
         Log.i(TAG, "onCreate: UserType: " + userType);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         switch (userType) {

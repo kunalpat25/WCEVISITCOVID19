@@ -61,6 +61,7 @@
         android:textSize="24sp"
         android:layout_gravity="center"
         android:layout_below="@+id/choose_date_layout"
+        android:visibility="gone"
         android:layout_centerHorizontal="true"/>
 
     <View
@@ -70,13 +71,23 @@
         android:layout_height="1dp"
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"
+        android:visibility="gone"
         android:background="@android:color/black"/>
+
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Search Here"
+        android:iconifiedByDefault="false"
+        android:layout_below="@id/v1"
+        />
 
     <ListView
         android:id="@+id/visitorsListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/v1"
+        android:layout_below="@+id/searchView"
         android:layout_marginTop="20dp"/>
 
     <TextView
