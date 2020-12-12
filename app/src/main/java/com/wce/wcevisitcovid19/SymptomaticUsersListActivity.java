@@ -24,7 +24,6 @@ import java.util.ArrayList;
 public class SymptomaticUsersListActivity extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference dbRef = database.getReference("Daily_assessment");
-    TextView symptomTextView ;
     ListView usersListView;
     ArrayList<String> usersList = new ArrayList<>();
     ArrayList<String> userTypeList = new ArrayList<>();
@@ -32,6 +31,8 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
     private static final String TAG = "SymptomaticStudentsList";
     UserListAdapter userListAdapter;
     ProgressBar progressBar ;
+    TextView countTextView;
+    int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +47,12 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
         String month = String.valueOf(intent.getStringExtra("month"));
         String date = String.valueOf(intent.getStringExtra("date"));
 
-        symptomTextView = findViewById(R.id.symptomTextView);
-        symptomTextView.setText(symptom);
+        getSupportActionBar().setTitle(symptom);
 
         usersListView = findViewById(R.id.symptomatic_users_list_view);
         userListAdapter = new UserListAdapter(this, usersList,userTypeList);
         usersListView.setAdapter(userListAdapter);
+        countTextView = findViewById(R.id.symptomatic_users_count_text_view);
 
         //fetching students
         DatabaseReference todaysAssessmentDatabaseReference = dbRef.child(String.valueOf(year)).child(String.valueOf(month)).child(String.valueOf(date)).child("Symptoms").child(symptom).child("Students");
@@ -73,6 +74,8 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                                 userIdList.add(studentPRN);
                                 usersList.add(studentName);
                                 userTypeList.add("Students");
+                                count = usersList.size();
+                                countTextView.setText(String.valueOf(count));
                                 Log.i(TAG, "onDataChange: Student having symptom: " + studentName);
                                 userListAdapter.notifyDataSetChanged();
                             }
@@ -112,6 +115,8 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                                 userIdList.add(empId);
                                 usersList.add(facultyName);
                                 userTypeList.add("Faculty");
+                                count = usersList.size();
+                                countTextView.setText(String.valueOf(count));
                                 Log.i(TAG, "onDataChange: Faculty having symptom: " + facultyName);
                                 userListAdapter.notifyDataSetChanged();
                             }
@@ -151,6 +156,8 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                                 userIdList.add(empId);
                                 usersList.add(nonTeachingStaffName);
                                 userTypeList.add("Non_teaching");
+                                count = usersList.size();
+                                countTextView.setText(String.valueOf(count));
                                 Log.i(TAG, "onDataChange: Non Teaching Staff having symptom: " + nonTeachingStaffName);
 
                                 userListAdapter.notifyDataSetChanged();
@@ -190,6 +197,8 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                                 userIdList.add(visitorId);
                                 usersList.add(outsiderName);
                                 userTypeList.add("Outsiders");
+                                count = usersList.size();
+                                countTextView.setText(String.valueOf(count));
                                 Log.i(TAG, "onDataChange: Outsider having symptom: " + outsiderName);
                                 userListAdapter.notifyDataSetChanged();
                             }
@@ -215,6 +224,8 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
         userTypeList.clear();
         userIdList.clear();
         usersList.clear();
+
+        countTextView.setText(String.valueOf(count));
 
         usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

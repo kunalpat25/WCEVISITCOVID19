@@ -37,6 +37,8 @@ public class StateUsersActivity extends AppCompatActivity {
     ProgressBar progressBar;
     String userId,username;
     String stateName;
+    TextView countTextView;
+    int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +48,14 @@ public class StateUsersActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         stateUsersListView = findViewById(R.id.state_users_list_view);
-        stateTextView = findViewById(R.id.state_text_view);
         userListAdapter = new UserListAdapter(this,usersList,userTypeList);
         stateUsersListView.setAdapter(userListAdapter);
+        countTextView = findViewById(R.id.state_count_text_view);
 
         Intent intent = getIntent();
         stateName = intent.getStringExtra("state");
-        stateTextView.setText(stateName);
+        getSupportActionBar().setTitle(stateName);
 
-
-        //trial to reduce data consumption, if not worked, remove
-        //successful
         //fetching students
         DatabaseReference studentsDatabaseReference = dbRef.child("State Wise Users").child(stateName).child("Students");
         studentsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -74,6 +73,8 @@ public class StateUsersActivity extends AppCompatActivity {
                             usersList.add(username);
                             userTypeList.add("Students");
                             userIdList.add(studentPRN);
+                            count = usersList.size();
+                            countTextView.setText(String.valueOf(count));
                             Log.i(TAG, "onDataChange: Student in state: " +stateName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
@@ -111,6 +112,8 @@ public class StateUsersActivity extends AppCompatActivity {
                             usersList.add(username);
                             userTypeList.add("Faculty");
                             userIdList.add(userId);
+                            count = usersList.size();
+                            countTextView.setText(String.valueOf(count));
                             Log.i(TAG, "onDataChange: Faculty in state: " +stateName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
@@ -148,6 +151,8 @@ public class StateUsersActivity extends AppCompatActivity {
                             usersList.add(username);
                             userTypeList.add("Non_teaching");
                             userIdList.add(userId);
+                            count = usersList.size();
+                            countTextView.setText(String.valueOf(count));
                             Log.i(TAG, "onDataChange: NonTeaching Staff in state: " +stateName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
@@ -185,6 +190,8 @@ public class StateUsersActivity extends AppCompatActivity {
                             usersList.add(username);
                             userTypeList.add("Outsiders");
                             userIdList.add(userId);
+                            count = usersList.size();
+                            countTextView.setText(String.valueOf(count));
                             Log.i(TAG, "onDataChange: Outsider in state: " +stateName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
@@ -207,6 +214,7 @@ public class StateUsersActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.GONE);
 
+        countTextView.setText(String.valueOf(count));
         usersList.clear();
         userIdList.clear();
         userTypeList.clear();

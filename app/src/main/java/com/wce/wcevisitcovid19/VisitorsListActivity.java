@@ -124,17 +124,30 @@ public class VisitorsListActivity extends AppCompatActivity {
                     for (String id : outsiderIdList)
                     {
                         final String finalOutsiderId = id;
-                        outsiderDatabaseReference = database.getReference("Outsiders").child(finalOutsiderId);
+                        final String[] outsiderName = new String[1];
+                        outsiderDatabaseReference = database.getReference("Outsiders").child(finalOutsiderId).child("Name");
                         outsiderDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-//                                String dateOfVisit = postSnapshot.child("Date of visit").getValue(String.class);
-                                String outsiderName = postSnapshot.child("Name").getValue(String.class);
-                                String locationOfVisit = postSnapshot.child("Location of visit").getValue(String.class);
+
+                                outsiderName[0] = postSnapshot.getValue(String.class);
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("error", error.getMessage());
+                            }
+                        });
+                        DatabaseReference outsiderLocationReference = database.getReference("Outsiders").child(finalOutsiderId).child("Location of visit");
+                        outsiderLocationReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot postSnapshot) {
+                                final String locationOfVisit = postSnapshot.getValue(String.class);
                                 Log.i(TAG, "onDataChange: finalOutsiderId : "+finalOutsiderId);
-                                Log.i(TAG, "onDataChange: name: "+outsiderName);
-                                visitorsList.add(new Visitor(finalOutsiderId,outsiderName,locationOfVisit));
-                                Log.i(TAG, "onDataChange: Visitor added: "+outsiderName);
+                                Log.i(TAG, "onDataChange: name: "+ outsiderName[0]);
+                                visitorsList.add(new Visitor(finalOutsiderId, outsiderName[0],locationOfVisit));
+                                Log.i(TAG, "onDataChange: Visitor added: "+ outsiderName[0]);
                                 visitorsListAdapter.notifyDataSetChanged();
                             }
 
@@ -295,19 +308,30 @@ public class VisitorsListActivity extends AppCompatActivity {
                             for (String id : outsiderIdList)
                             {
                                 final String finalOutsiderId = id;
-                                outsiderDatabaseReference = database.getReference("Outsiders").child(finalOutsiderId);
+                                final String[] outsiderName = new String[1];
+                                outsiderDatabaseReference = database.getReference("Outsiders").child(finalOutsiderId).child("Name");
                                 outsiderDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-//                                        String dateOfVisit = postSnapshot.child("Date of visit").getValue(String.class);
-                                        String outsiderName = postSnapshot.child("Name").getValue(String.class);
-                                        String locationOfVisit = postSnapshot.child("Location of visit").getValue(String.class);
-//                                        outsiderDatesOfVisitList.add(dateOfVisit);
-//                                        outsiderNamesList.add(outsiderName);
-//                                        locationOfVisitList.add(locationOfVisit);
+
+                                        outsiderName[0] = postSnapshot.getValue(String.class);
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.e("error", error.getMessage());
+                                    }
+                                });
+                                DatabaseReference outsiderLocationReference = database.getReference("Outsiders").child(finalOutsiderId).child("Location of visit");
+                                outsiderLocationReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot postSnapshot) {
+                                        final String locationOfVisit = postSnapshot.getValue(String.class);
                                         Log.i(TAG, "onDataChange: finalOutsiderId : "+finalOutsiderId);
-                                        Log.i(TAG, "onDataChange: name: "+outsiderName);
-                                        visitorsList.add(new Visitor(finalOutsiderId,outsiderName,locationOfVisit));
+                                        Log.i(TAG, "onDataChange: name: "+ outsiderName[0]);
+                                        visitorsList.add(new Visitor(finalOutsiderId, outsiderName[0],locationOfVisit));
+                                        Log.i(TAG, "onDataChange: Visitor added: "+ outsiderName[0]);
                                         visitorsListAdapter.notifyDataSetChanged();
                                     }
 

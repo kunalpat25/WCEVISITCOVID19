@@ -40,6 +40,8 @@ public class DistrictUsersActivity extends AppCompatActivity
 
     String districtName;
     String username,userId;
+    TextView countTextView;
+    int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +51,14 @@ public class DistrictUsersActivity extends AppCompatActivity
         progressBar = findViewById(R.id.progressBar);
 
         districtUsersListView = findViewById(R.id.district_users_list_view);
-        districtTextView = findViewById(R.id.district_text_view);
         userListAdapter = new UserListAdapter(this,usersList,userTypeList);
         districtUsersListView.setAdapter(userListAdapter);
+        countTextView = findViewById(R.id.district_count_text_view);
 
         Intent intent = getIntent();
         districtName = intent.getStringExtra("district");
         Log.i(TAG, "onCreate: districtName from intent: "+districtName);
-        districtTextView.setText(districtName);
+        getSupportActionBar().setTitle(districtName);
 
         //trial to reduce data consumption, if not worked, remove
         //fetching students
@@ -75,6 +77,8 @@ public class DistrictUsersActivity extends AppCompatActivity
                             usersList.add(username);
                             userTypeList.add("Students");
                             userIdList.add(userId);
+                            count = usersList.size();
+                            countTextView.setText(String.valueOf(count));
                             Log.i(TAG, "onDataChange: Student in district: " +districtName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
@@ -111,6 +115,8 @@ public class DistrictUsersActivity extends AppCompatActivity
                             usersList.add(username);
                             userTypeList.add("Faculty");
                             userIdList.add(userId);
+                            count = usersList.size();
+                            countTextView.setText(String.valueOf(count));
                             Log.i(TAG, "onDataChange: Faculty in district: " +districtName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
@@ -147,6 +153,8 @@ public class DistrictUsersActivity extends AppCompatActivity
                             usersList.add(username);
                             userTypeList.add("Non_teaching");
                             userIdList.add(userId);
+                            count = usersList.size();
+                            countTextView.setText(String.valueOf(count));
                             Log.i(TAG, "onDataChange: NonTeaching Staff in district: " +districtName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
@@ -184,6 +192,8 @@ public class DistrictUsersActivity extends AppCompatActivity
                             usersList.add(username);
                             userTypeList.add("Outsiders");
                             userIdList.add(userId);
+                            count = usersList.size();
+                            countTextView.setText(String.valueOf(count));
                             Log.i(TAG, "onDataChange: Outsider in district: " +districtName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
@@ -208,7 +218,7 @@ public class DistrictUsersActivity extends AppCompatActivity
         userTypeList.clear();
         usersList.clear();
         userIdList.clear();
-
+        countTextView.setText(String.valueOf(count));
 
         districtUsersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

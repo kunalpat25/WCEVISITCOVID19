@@ -41,12 +41,12 @@ public class AdminActivity extends AppCompatActivity
         menuList.add(getString(R.string.district_wise_list));
         menuList.add(getString(R.string.state_wise_list));
         menuList.add("Visitors' List");
-        menuList.add(getString(R.string.senior_citizens));
-        menuList.add(getString(R.string.quarantine_stamped));
+//        menuList.add(getString(R.string.senior_citizens));
+//        menuList.add(getString(R.string.quarantine_stamped));
 //        menuList.add(getString(R.string.travelled_from_containment_zone));
 //        menuList.add(getString(R.string.group_more_than_five));
-//        menuList.add(getString(R.string.without_mask));
-//        menuList.add(getString(R.string.violating_covid19_guidelines));
+        menuList.add(getString(R.string.without_mask));
+        menuList.add(getString(R.string.violating_covid19_guidelines));
 
         adapter=new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
@@ -129,27 +129,31 @@ public class AdminActivity extends AppCompatActivity
                         intent = new Intent(AdminActivity.this,VisitorsListActivity.class);
                         startActivity(intent);
                         break;
+//                    case 4:
+//                        activity = "senior";
+//                        intent = new Intent(AdminActivity.this, SeniorCitizensListActivity.class);
+//                        startActivity(intent);
+//                        break;
+//                    case 5:
+//                        activity = "quarantine";
+//                        intent = new Intent(AdminActivity.this,QuarantinedStampedActivity.class);
+//                        startActivity(intent);
+//                        break;
+//                    case 6:
+//                        activity = "containment";
+//                        break;
+//                    case 7:
+//                        activity = "group_5+";
+//                        break;
                     case 4:
-                        activity = "senior";
-                        intent = new Intent(AdminActivity.this, SeniorCitizensListActivity.class);
+                        activity = "without_mask";
+                        intent = new Intent(AdminActivity.this,WithoutMaskActivity.class);
                         startActivity(intent);
                         break;
                     case 5:
-                        activity = "quarantine";
-                        intent = new Intent(AdminActivity.this,QuarantinedStampedActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 6:
-                        activity = "containment";
-                        break;
-                    case 7:
-                        activity = "group_5+";
-                        break;
-                    case 8:
-                        activity = "without_mask";
-                        break;
-                    case 9:
                         activity = "violating_guidelines";
+                        intent = new Intent(AdminActivity.this,ViolatingGuidelinesActivity.class);
+                        startActivity(intent);
                         break;
                 }
             }
@@ -178,7 +182,6 @@ public class AdminActivity extends AppCompatActivity
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                // TODO Auto-generated method stub
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, month);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -197,7 +200,6 @@ public class AdminActivity extends AppCompatActivity
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 new DatePickerDialog(AdminActivity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
