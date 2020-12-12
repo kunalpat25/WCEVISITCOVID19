@@ -105,12 +105,16 @@ public class NormalUserActivity extends AppCompatActivity implements LocationLis
         AlarmReceiver.scheduleAlarm(alarmTime,"stop",PendingIntent.FLAG_ONE_SHOT,getApplicationContext());
 
         final Intent intent = getIntent();
+
         try {
             userType = intent.getStringExtra("userType");
         }
         catch (Exception e)
         {
-            userType = preferences.getString("userType",null);
+
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
+            userType = sharedPreferences.getString("userType",null);
+
         }
         Log.i(TAG, "onCreate: UserType: " + userType);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();

@@ -53,7 +53,7 @@
             android:layout_marginTop="24dp"
             android:text="@string/sign_in"
             android:layout_below="@id/input_password"/>
-        
+
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
