@@ -61,7 +61,8 @@
     <string name="tiredness">Tiredness</string>
     <string name="none">None of the above</string>
     <string name="covid19guidelines"> COVID-19 GUIDELINES </string>
-    <string name="default_notification_channel_id">alarm_channel_id_01</string>
+    <string name="default_notification_channel_id">wce_notification_channel_01</string>
+    <string name="default_notification_channel_name">WCE Notifications</string>
     <string name="visitors">Visitors</string>
     <string name="count">Count :</string>
     <string name="no_visitor">No visitor found</string>
