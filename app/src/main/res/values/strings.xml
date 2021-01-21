@@ -90,4 +90,6 @@
     <string name="guideline3">Protect yourself and others around you by knowing the facts and taking appropriate precautions. Follow advice provided by your local health authority</string>
     <string name="guideline4"><u>To prevent the spread of Covid-19</u></string>
     <string name="development_progress">Development currently in progress</string>
+    <string name="enter_credentials">Please enter credentials</string>
+    <string name="tnc_text">By continuing, you agree to our <a href="https://wce-visitor-management.web.app/assets/privacy-policy.pdf">Privacy Policy</a></string>
 </resources>

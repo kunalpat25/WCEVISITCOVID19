@@ -23,7 +23,6 @@ import java.util.TimeZone;
 
 public class AdminActivity extends AppCompatActivity
 {
-
     private static final String TAG = "AdminActivity";
     Button logoutBtn;
     ArrayAdapter<String> adapter;
@@ -36,19 +35,15 @@ public class AdminActivity extends AppCompatActivity
 
         final ListView menuListView = findViewById(R.id.menuListView);
 
-        List<String> menuList = new ArrayList();
+        ArrayList<String> menuList = new ArrayList<>();
         menuList.add(getString(R.string.symptoms));
         menuList.add(getString(R.string.district_wise_list));
         menuList.add(getString(R.string.state_wise_list));
         menuList.add("Visitors' List");
-//        menuList.add(getString(R.string.senior_citizens));
-//        menuList.add(getString(R.string.quarantine_stamped));
-//        menuList.add(getString(R.string.travelled_from_containment_zone));
-//        menuList.add(getString(R.string.group_more_than_five));
         menuList.add(getString(R.string.without_mask));
         menuList.add(getString(R.string.violating_covid19_guidelines));
 
-        adapter=new ArrayAdapter<String>(this,
+        adapter= new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
                 menuList);
         menuListView.setAdapter(adapter);
@@ -129,22 +124,6 @@ public class AdminActivity extends AppCompatActivity
                         intent = new Intent(AdminActivity.this,VisitorsListActivity.class);
                         startActivity(intent);
                         break;
-//                    case 4:
-//                        activity = "senior";
-//                        intent = new Intent(AdminActivity.this, SeniorCitizensListActivity.class);
-//                        startActivity(intent);
-//                        break;
-//                    case 5:
-//                        activity = "quarantine";
-//                        intent = new Intent(AdminActivity.this,QuarantinedStampedActivity.class);
-//                        startActivity(intent);
-//                        break;
-//                    case 6:
-//                        activity = "containment";
-//                        break;
-//                    case 7:
-//                        activity = "group_5+";
-//                        break;
                     case 4:
                         activity = "without_mask";
                         intent = new Intent(AdminActivity.this,WithoutMaskActivity.class);

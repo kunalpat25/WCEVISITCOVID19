@@ -428,8 +428,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                 break;
         }
 
-
-
         callImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -35,9 +35,6 @@ public class VisitorsListActivity extends AppCompatActivity {
     private static final String TAG = "VisitorsListActivity";
     EditText editVisitDate;
     ListView  visitorsListView;
-//    ArrayList<String> outsiderNamesList = new ArrayList<>();
-//    ArrayList<String> locationOfVisitList = new ArrayList<>();
-//    ArrayList<String> outsiderDatesOfVisitList = new ArrayList<>();
     ArrayList<String> outsiderIdList = new ArrayList<>();
     ArrayList<Visitor> visitorsList = new ArrayList<>();
     final Calendar myCalendar = Calendar.getInstance();
@@ -48,12 +45,6 @@ public class VisitorsListActivity extends AppCompatActivity {
     TextView countTextView,infoTextView;
     String count;
     SearchView searchView;
-
-    //trial
-//    ArrayList<String> namesList = new ArrayList<>();
-//    ArrayList<String> addressList = new ArrayList<>();
-//    ArrayList<String> dateOfVisitList = new ArrayList<>();
-//    ArrayList<String> idList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,67 +161,6 @@ public class VisitorsListActivity extends AppCompatActivity {
                 Log.e("error", error.getMessage());
             }
         });
-
-//        DatabaseReference outsiderDatabaseReference;
-//        for (String id : outsiderIdList)
-//        {
-//            outsiderId = id;
-//            outsiderDatabaseReference = database.getReference("Outsiders").child(outsiderId);
-//            outsiderDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-//                    String dateOfVisit = postSnapshot.child("Date of visit").getValue(String.class);
-//                    String outsiderName = postSnapshot.child("Name").getValue(String.class);
-//                    String locationOfVisit = postSnapshot.child("Location of visit").getValue(String.class);
-//                    outsiderDatesOfVisitList.add(dateOfVisit);
-//                    outsiderNamesList.add(outsiderName);
-//                    locationOfVisitList.add(locationOfVisit);
-//                    visitorsListAdapter.notifyDataSetChanged();
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError error) {
-//                    Log.e("error", error.getMessage());
-//                }
-//            });
-//        }
-
-
-
-
-
-//        DatabaseReference outsidersDatabaseReference = database.getReference("Outsiders");
-//        outsidersDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-//            {
-//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren())
-//                {
-//                    String dateOfVisit = postSnapshot.child("Date of visit").getValue(String.class);
-//                    String outsiderId = postSnapshot.getKey();
-//                    String outsiderName = postSnapshot.child("Name").getValue(String.class);
-//                    String outsiderAddress = postSnapshot.child("Location of visit").getValue(String.class);
-//                    dateOfVisitList.add(dateOfVisit);
-//                    idList.add(outsiderId);
-//                    namesList.add(outsiderName);
-//                    addressList.add(outsiderAddress);
-//                    if (visitDate.equals(dateOfVisit))
-//                    {
-//                        //add visitor to list
-//                        outsiderNamesList.add(outsiderName);
-//                        outsidersAddressList.add(outsiderAddress);
-//                        outsiderIdList.add(outsiderId);
-//                        Log.i(TAG, "onDataChange: Visitor visiting on : " + visitDate + ": " + outsiderName);
-//                        visitorsListAdapter.notifyDataSetChanged();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Log.e("error", error.getMessage());
-//            }
-//        });
 
         final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -356,48 +286,6 @@ public class VisitorsListActivity extends AppCompatActivity {
                     }
                 });
 
-//                DatabaseReference outsiderDatabaseReference;
-//                for (String id : outsiderIdList)
-//                {
-//                    outsiderId = id;
-//                    outsiderDatabaseReference = database.getReference("Outsiders").child(outsiderId);
-//                    outsiderDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-//                            String dateOfVisit = postSnapshot.child("Date of visit").getValue(String.class);
-//                            String outsiderName = postSnapshot.child("Name").getValue(String.class);
-//                            String locationOfVisit = postSnapshot.child("Location of visit").getValue(String.class);
-//                            outsiderDatesOfVisitList.add(dateOfVisit);
-//                            outsiderNamesList.add(outsiderName);
-//                            locationOfVisitList.add(locationOfVisit);
-//                            visitorsListAdapter.notifyDataSetChanged();
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError error) {
-//                            Log.e("error", error.getMessage());
-//                        }
-//                    });
-//                }
-
-
-
-
-                //successfully optimized..
-//                int i=0;
-//                for(String dateOfVisit: dateOfVisitList)
-//                {
-//                    if(visitDate.equals(dateOfVisit))
-//                    {
-//                        outsiderNamesList.add(namesList.get(i));
-//                        locationOfVisitList.add(addressList.get(i));
-//                        outsiderIdList.add(idList.get(i));
-//                        Log.i(TAG, "onDataChange: Visitor visiting on : " + visitDate + ": " + namesList.get(i));
-//                        visitorsListAdapter.notifyDataSetChanged();
-//                    }
-//                    i++;
-//                }
-
             }
         });
 
@@ -418,8 +306,6 @@ public class VisitorsListActivity extends AppCompatActivity {
         }  );
 
         outsiderIdList.clear();
-//        outsiderNamesList.clear();
-//        locationOfVisitList.clear();
         visitorsList.clear();
     }
 }
