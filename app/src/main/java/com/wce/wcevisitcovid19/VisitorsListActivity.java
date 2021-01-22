@@ -134,7 +134,7 @@ public class VisitorsListActivity extends AppCompatActivity {
                         outsiderLocationReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-                                final String locationOfVisit = postSnapshot.getValue(String.class);
+                                final String locationOfVisit = postSnapshot.getValue(String.class).toLowerCase();
                                 Log.i(TAG, "onDataChange: finalOutsiderId : "+finalOutsiderId);
                                 Log.i(TAG, "onDataChange: name: "+ outsiderName[0]);
                                 visitorsList.add(new Visitor(finalOutsiderId, outsiderName[0],locationOfVisit));

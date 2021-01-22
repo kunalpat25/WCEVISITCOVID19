@@ -54,13 +54,13 @@ public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filter
         try
         {
             name = tempList.get(position).getName();
-            locationOfVisit = tempList.get(position).getLocationOfVisit();
+            locationOfVisit = tempList.get(position).getLocationOfVisit().toLowerCase();
             Log.i(TAG, "getView: getting name: "+name);
         }
         catch (Exception e)
         {
             name = visitorsList.get(position).getName();
-            locationOfVisit = visitorsList.get(position).getLocationOfVisit();
+            locationOfVisit = visitorsList.get(position).getLocationOfVisit().toLowerCase();
         }
 
         nameTextView.setText(name);

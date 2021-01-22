@@ -59,11 +59,12 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
         todaysAssessmentDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userTypeList.clear();
+                userIdList.clear();
+                usersList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     final String studentPRN = postSnapshot.getKey();
                     String status = postSnapshot.getValue(String.class);
-
-
                     if("yes".equalsIgnoreCase(status)) {
                         DatabaseReference studentDatabaseReference = database.getReference("Students").child(studentPRN);
                         studentDatabaseReference.addValueEventListener(new ValueEventListener() {
@@ -101,16 +102,18 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
         todaysAssessmentDatabaseReference1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userTypeList.clear();
+                userIdList.clear();
+                usersList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     final String empId = postSnapshot.getKey();
-//                    String facultyName = postSnapshot.child("");
                     String status = postSnapshot.getValue(String.class);
-
                     if("yes".equalsIgnoreCase(status)) {
                         DatabaseReference facultyDatabaseReference = database.getReference("Faculty").child(empId);
                         facultyDatabaseReference.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                                 String facultyName = snapshot.child("Name").getValue(String.class);
                                 userIdList.add(empId);
                                 usersList.add(facultyName);
@@ -143,15 +146,18 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
         todaysAssessmentDatabaseReference2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userTypeList.clear();
+                userIdList.clear();
+                usersList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     final String empId = postSnapshot.getKey();
                     String status = postSnapshot.getValue(String.class);
-
                     if("yes".equalsIgnoreCase(status)) {
                         DatabaseReference nonTeachingDatabaseReference = database.getReference("Non_teaching").child(empId);
                         nonTeachingDatabaseReference.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                                 String nonTeachingStaffName = snapshot.child("Name").getValue(String.class);
                                 userIdList.add(empId);
                                 usersList.add(nonTeachingStaffName);
@@ -184,6 +190,9 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
         todaysAssessmentDatabaseReference3.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userTypeList.clear();
+                userIdList.clear();
+                usersList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     final String visitorId = postSnapshot.getKey();
                     String status = postSnapshot.getValue(String.class);
