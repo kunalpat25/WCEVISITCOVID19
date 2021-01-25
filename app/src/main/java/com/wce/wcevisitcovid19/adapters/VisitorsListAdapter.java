@@ -20,15 +20,12 @@ import com.wce.wcevisitcovid19.utils.SearchUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wce.wcevisitcovid19.utils.SearchUtils.zFunction;
-
 public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filterable
 {
     private final Activity context;
     private static final String TAG = "VisitorsListAdapter";
     ArrayList<Visitor> visitorsList;
-    private List<Visitor> tempList;
-    List<Visitor> mStringFilterList;
+    ArrayList<Visitor> filteredVisitorsList;
     ValueFilter valueFilter= new ValueFilter();
     int visitorCount;
 
@@ -37,8 +34,7 @@ public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filter
         this.context = context;
         this.visitorsList = visitorsList;
         this.visitorCount = visitorsList.size();
-        this.mStringFilterList = visitorsList;
-        this.tempList = visitorsList;
+        this.filteredVisitorsList = visitorsList;
     }
 
     @NonNull
@@ -53,8 +49,8 @@ public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filter
         String id,name,locationOfVisit;
         try
         {
-            name = tempList.get(position).getName();
-            locationOfVisit = tempList.get(position).getLocationOfVisit().toLowerCase();
+            name = filteredVisitorsList.get(position).getName();
+            locationOfVisit = filteredVisitorsList.get(position).getLocationOfVisit().toLowerCase();
             Log.i(TAG, "getView: getting name: "+name);
         }
         catch (Exception e)
@@ -69,7 +65,10 @@ public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filter
         return rowView;
     }
 
-
+    public ArrayList<Visitor> getFilteredVisitorsList()
+    {
+        return filteredVisitorsList;
+    }
 
 
     @Override
@@ -80,45 +79,32 @@ public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filter
     private class ValueFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            Log.i(TAG, "performFiltering: Filtering performed automatically..constraint: " + constraint);
             FilterResults results = new FilterResults();
 
             if (constraint != null && constraint.length() > 0) {
                 ArrayList<Visitor> filteredValues = new ArrayList<>();
-                Log.i(TAG, "performFiltering: mStringFilterList size: " + mStringFilterList.size());
-                for (int i = 0; i < mStringFilterList.size(); i++) {
-                    String filterString = mStringFilterList.get(i).getName();
-                    boolean isPresent = SearchUtils.isPresent(filterString,constraint);
-//                    String process = constraint + "@" + filterString;
-//                    int[] current = zFunction(process);
-//                    boolean isPresent = false;
-//                    int targetSize = constraint.length();
-//                    for (int j = 0; j < filterString.length(); j++) {
-//                        if (current[j + targetSize + 1] == targetSize) {
-//                            isPresent = true;
-//                            break;
-//                        }
-//                    }
+                String name;
+                for (int i = 0; i < visitorsList.size(); i++) {
+                    name = visitorsList.get(i).getName();
+                    boolean isPresent = SearchUtils.isPresent(name,constraint);
                     if (isPresent) {
-                        filteredValues.add(new Visitor(mStringFilterList.get(i).getId(),filterString,mStringFilterList.get(i).getLocationOfVisit()));
+                        Visitor visitor = visitorsList.get(i);
+                        filteredValues.add(visitor);
                     }
                 }
                 results.count = filteredValues.size();
                 results.values = filteredValues;
             } else {
-                results.count = mStringFilterList.size();
-                results.values = mStringFilterList;
+                results.count = visitorsList.size();
+                results.values = visitorsList;
             }
-
-
             return results;
-
         }
 
         @Override
         protected void publishResults(CharSequence constraint,
                                       FilterResults results) {
-            tempList = (ArrayList<Visitor>) results.values;
+            filteredVisitorsList = (ArrayList<Visitor>) results.values;
             notifyDataSetChanged();
         }
 

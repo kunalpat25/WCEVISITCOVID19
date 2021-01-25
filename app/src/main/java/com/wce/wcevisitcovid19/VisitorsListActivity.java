@@ -89,9 +89,6 @@ public class VisitorsListActivity extends AppCompatActivity {
             }
         });
 
-        //trying to reduce data fetching time and implement re-usability
-        //thereby increasing space consumption on device's RAM
-        //successfully optimized
         DateUtils du;
         du = new DateUtils(visitDate);
         String fetchDate = du.extractDate();
@@ -135,10 +132,7 @@ public class VisitorsListActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot postSnapshot) {
                                 final String locationOfVisit = postSnapshot.getValue(String.class).toLowerCase();
-                                Log.i(TAG, "onDataChange: finalOutsiderId : "+finalOutsiderId);
-                                Log.i(TAG, "onDataChange: name: "+ outsiderName[0]);
                                 visitorsList.add(new Visitor(finalOutsiderId, outsiderName[0],locationOfVisit));
-                                Log.i(TAG, "onDataChange: Visitor added: "+ outsiderName[0]);
                                 visitorsListAdapter.notifyDataSetChanged();
                             }
 
@@ -206,9 +200,6 @@ public class VisitorsListActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s)
             {
-                Log.i(TAG, "afterTextChanged: Now date changed: "+visitDate);
-//                outsiderNamesList.clear();
-//                locationOfVisitList.clear();
                 outsiderIdList.clear();
                 visitorsList.clear();
                 visitorsListAdapter.notifyDataSetChanged();
@@ -258,10 +249,7 @@ public class VisitorsListActivity extends AppCompatActivity {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot postSnapshot) {
                                         final String locationOfVisit = postSnapshot.getValue(String.class);
-                                        Log.i(TAG, "onDataChange: finalOutsiderId : "+finalOutsiderId);
-                                        Log.i(TAG, "onDataChange: name: "+ outsiderName[0]);
                                         visitorsList.add(new Visitor(finalOutsiderId, outsiderName[0],locationOfVisit));
-                                        Log.i(TAG, "onDataChange: Visitor added: "+ outsiderName[0]);
                                         visitorsListAdapter.notifyDataSetChanged();
                                     }
 
@@ -292,11 +280,10 @@ public class VisitorsListActivity extends AppCompatActivity {
         visitorsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String userName = visitorsList.get(position).getName();
+                ArrayList<Visitor> filteredList = visitorsListAdapter.getFilteredVisitorsList();
+                String userName = filteredList.get(position).getName();
                 String userType = "Outsiders";
-//                String userId = outsiderIdList.get(position);
-                String userId = visitorsList.get(position).getId();
-                Log.i(TAG, "onItemClick: userId: "+userId + userName);
+                String userId = filteredList.get(position).getId();
                 Intent intent = new Intent(VisitorsListActivity.this,UserDetailsActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("userType",userType);
