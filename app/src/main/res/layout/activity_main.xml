@@ -19,13 +19,15 @@
             android:layout_marginBottom="24dp"
             android:layout_gravity="center_horizontal" />
 
-        <Spinner
-            android:id="@+id/user_type_spinner"
+        <TextView
+            android:id="@+id/enter_credentials_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/logo_image_view"
             android:layout_marginBottom="10dp"
-            android:spinnerMode="dropdown"
+            android:text="@string/enter_credentials"
+            android:textSize="18sp"
+            android:gravity="center"
             />
 
         <EditText
@@ -34,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
                 android:hint="@string/email_hint"
-                android:layout_below="@+id/user_type_spinner"
+                android:layout_below="@+id/enter_credentials_text_view"
                  />
 
         <EditText android:id="@+id/input_password"
@@ -53,6 +55,30 @@
             android:layout_marginTop="24dp"
             android:text="@string/sign_in"
             android:layout_below="@id/input_password"/>
+
+        <LinearLayout
+            android:id="@+id/tnc_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:layout_alignParentBottom="true"
+                >
+
+        <CheckBox
+            android:id="@+id/agree_tnc_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+               />
+
+        <TextView
+            android:id="@+id/agree_terms_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/tnc_text"/>
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/progressBar"

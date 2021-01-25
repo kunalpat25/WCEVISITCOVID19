@@ -78,6 +78,7 @@ public class SymptomsActivity extends AppCompatActivity {
         todaysAssessmentDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                symptomsList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     String symptom = postSnapshot.getKey();
                     symptomsList.add(symptom);

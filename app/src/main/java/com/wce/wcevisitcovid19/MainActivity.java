@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,12 +25,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wce.wcevisitcovid19.models.Admin;
+import com.wce.wcevisitcovid19.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,227 +43,119 @@ public class MainActivity extends AppCompatActivity {
     EditText inputEmail;
     EditText inputPassword;
     Button signInBtn;
+    CheckBox tncCheckBox;
+    TextView tncTextView;
 
     ProgressBar progressBar;
     FirebaseDatabase firebaseDatabase;
-    //    private DatabaseReference facultyDatabaseReference;
     private DatabaseReference adminDatabaseReference;
-    Admin admin;
-    Spinner userTypeSpinner;
-    //    Faculty faculty;
-//    List<Faculty> facultyList = new ArrayList<>();
-    List<Admin> adminList = new ArrayList<>();
 
     private FirebaseAuth auth;
-    boolean isFaculty;
-    String userType;
-
-    boolean isNormalUser = true;
+    Utils utils ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        new NormalUserActivity().scheduleAlarm();
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         auth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-
-        adminDatabaseReference = firebaseDatabase.getReference("Admin");
+        utils = new Utils();
+        adminDatabaseReference = firebaseDatabase.getReference("Users");
 
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 
-
-        //checking already logged in user
-        if (checkUserLoginStatus(this)) {
-            final String typeOfUser = getUserType(this);
-            if (typeOfUser.equals("Admin")) {
-
-                adminDatabaseReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                            Admin admin = postSnapshot.getValue(Admin.class);
-                            adminList.add(admin);
-                        }
-                        boolean flag = true;
-
-                        //checking user is an admin or not
-                        for (int i = 0; i < adminList.size(); i++) {
-                            Log.i(TAG, "onDataChange: Admin Email: " + adminList.get(i).getEmail());
-                            String adminEmail = adminList.get(i).getEmail();
-                            SharedPreferences preferences = getApplicationContext().getSharedPreferences("WCEVISITCOVID19", 0);
-                            String emailID = preferences.getString("email", null);
-                            if (emailID.equalsIgnoreCase(adminEmail)) {
-                                Log.i(TAG, "onDataChange: Entered Email: " + emailID);
-                                Log.i(TAG, "onDataChange: Now breaking loop..got admin");
-                                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
-                                progressBar.setVisibility(View.GONE);
-                                startActivity(intent);
-                                flag = false;
-                                finish();
-                            }
-                        }
-                        //if not admin, login normal user
-                        if (flag) {
-                            Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
-                            progressBar.setVisibility(View.GONE);
-                            intent.putExtra("userType",typeOfUser);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("error", error.getMessage());
-                    }
-                });
-            } else //Normal User is logged in
-            {
-                String dailyAssessmentFilledStatus = sharedPreferences.getString("dailyAssessmentStatus", null);
-                if ("filled".equals(dailyAssessmentFilledStatus)) {
-                    //if filled
-                    //show Guideline Activity
-                    progressBar.setVisibility(View.GONE);
-                    Intent intent = new Intent(MainActivity.this, GuidelinesActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    //else not filled
-                    //show NormalUser activity
-                    progressBar.setVisibility(View.GONE);
-                    Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
-                    intent.putExtra("userType",typeOfUser);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        } else
-            progressBar.setVisibility(View.GONE);
-
+        progressBar.setVisibility(View.GONE);
 
         inputEmail = findViewById(R.id.input_email);
         inputPassword = findViewById(R.id.input_password);
         signInBtn = findViewById(R.id.btn_login);
-        userTypeSpinner = findViewById(R.id.user_type_spinner);
-        final List<String> userTypesList = new ArrayList<String>();
-        userTypesList.add("Select user type");
-        userTypesList.add("Admin");
-        userTypesList.add("Faculty");
-        userTypesList.add("Non Teaching Staff");
-        userTypesList.add("Student");
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, userTypesList);
-        userTypeSpinner.setAdapter(adapter);
-        userTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                userType = userTypesList.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        tncCheckBox = findViewById(R.id.agree_tnc_checkbox);
+        tncTextView = findViewById(R.id.agree_terms_text_view);
+        tncTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                boolean loginStatus = checkUserLoginStatus(getApplicationContext());
-                if (loginStatus) {
-//                    Toast.makeText(MainActivity.this, "Already logged in..", Toast.LENGTH_SHORT).show();
-                } else {
                     if (validateCredentials()) {
                         progressBar.setVisibility(View.VISIBLE);
                         final String emailID = inputEmail.getText().toString();
                         final String password = inputPassword.getText().toString();
-                        try {
-                            auth.signInWithEmailAndPassword(emailID, password)
-                                    .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<AuthResult> task) {
-                                            // If sign in fails, display a message to the user. If sign in succeeds
-                                            // the auth state listener will be notified and logic to handle the
-                                            // signed in user can be handled in the listener.
-
-                                            if (!task.isSuccessful()) {
-                                                // there was an error
-                                                if (password.length() < 6) {
-                                                    inputPassword.setError(getString(R.string.minimum_password));
-                                                } else {
-                                                    Toast.makeText(MainActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
-                                                }
-                                                progressBar.setVisibility(View.GONE);
-                                            } else {
-                                                //Login successful
-                                                editor.putString("loginStatus", "loggedIn");
-                                                editor.putString("email", emailID);
-                                                editor.putString("userType", userType);
-                                                editor.apply();
-                                                editor.commit();
-                                                //For testing purpose
-                                                progressBar.setVisibility(View.GONE);
-                                                Toast.makeText(MainActivity.this, "Signed In successfully!", Toast.LENGTH_SHORT).show();
-                                                inputEmail.setText("");
-                                                inputPassword.setText("");
-                                                userTypeSpinner.setSelection(0);
-                                                //Handle next Activity
-
-                                                if (userType.equals("Admin")) {
-                                                    adminDatabaseReference.addValueEventListener(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                                                Admin admin = postSnapshot.getValue(Admin.class);
-                                                                adminList.add(admin);
-                                                            }
-
-
-                                                            //checking user is a admin or not
-                                                            for (int i = 0; i < adminList.size(); i++) {
-                                                                Log.i(TAG, "onDataChange: Admin Email: " + adminList.get(i).getEmail());
-                                                                String adminEmail = adminList.get(i).getEmail();
-                                                                if (emailID.equalsIgnoreCase(adminEmail)) {
-                                                                    Log.i(TAG, "onDataChange: Entered Email: " + emailID);
-                                                                    Log.i(TAG, "onDataChange: Now breaking loop..got admin");
-                                                                    Intent intent = new Intent(MainActivity.this, AdminActivity.class);
-                                                                    isNormalUser = false;
-                                                                    startActivity(intent);
-                                                                    finish();
-                                                                    break;
-                                                                }
-                                                            }
+                        String emailHash = utils.generateHash(emailID);
+                        adminDatabaseReference.child(emailHash).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if(snapshot.exists())
+                                { // user found in database
+                                    Boolean isAdmin = snapshot.child("Admin").getValue(Boolean.class);
+                                    if(isAdmin)
+                                    { // user is admin
+                                        try{
+                                            auth.signInWithEmailAndPassword(emailID,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                                    // If sign in fails, display a message to the user. If sign in succeeds
+                                                    // the auth state listener will be notified and logic to handle the
+                                                    // signed in user can be handled in the listener.
+                                                    if (!task.isSuccessful()) {
+                                                        // there was an error
+                                                        if (password.length() < 6) {
+                                                            inputPassword.setError(getString(R.string.minimum_password));
+                                                        } else {
+                                                            Toast.makeText(MainActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                                         }
+                                                        progressBar.setVisibility(View.GONE);
+                                                    } else {
+                                                        //Login successful
+                                                        editor.putString("loginStatus", "loggedIn");
+                                                        editor.putString("email", emailID);
+                                                        editor.commit();
+                                                        //For testing purpose
+                                                        progressBar.setVisibility(View.GONE);
+                                                        Toast.makeText(MainActivity.this, "Signed In successfully!", Toast.LENGTH_SHORT).show();
+                                                        inputEmail.setText("");
+                                                        inputPassword.setText("");
 
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError error) {
-                                                            Log.e("error", error.getMessage());
-                                                        }
-                                                    });
+                                                        Intent intent = new Intent(MainActivity.this,AdminActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
                                                 }
-                                                //if not admin, login student
-                                                if (isNormalUser) {
-                                                    Intent intent = new Intent(MainActivity.this, NormalUserActivity.class);
-                                                    intent.putExtra("userType", userType);
-                                                    editor.putString("userType", userType);
-                                                    editor.apply();
-                                                    editor.commit();
-                                                    startActivity(intent);
-                                                    finish();
-                                                }
-                                            }
+                                            });
                                         }
-                                    });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                                        catch (Exception ex)
+                                        {
+                                            // error signing in
+                                            ex.printStackTrace();
+                                        }
+                                    }
+                                    else
+                                    { // user is not admin
+                                        inputEmail.setText("");
+                                        inputPassword.setText("");
+                                        Toast.makeText(MainActivity.this, "Invalid credentials!", Toast.LENGTH_SHORT).show();
+                                        progressBar.setVisibility(View.GONE);
+                                    }
+                                }
+                                else
+                                { // user not found in database
+                                    inputEmail.setText("");
+                                    inputPassword.setText("");
+                                    Toast.makeText(MainActivity.this, "Invalid credentials!", Toast.LENGTH_SHORT).show();
+                                    progressBar.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("error", error.getMessage());
+                            }
+                        });
                     }
-                }
+                    // else validation failed
             }
         });
     }
@@ -267,9 +164,10 @@ public class MainActivity extends AppCompatActivity {
         boolean flag = false;
         final String emailID = inputEmail.getText().toString();
         final String password = inputPassword.getText().toString();
-        if (emailID.matches("") || password.matches("") || userType.equals("Select user type")) {
-            if (userType.equals("Select user type")) {
-                Toast.makeText(this, "Please select User Type", Toast.LENGTH_SHORT).show();
+        final boolean isAgree = tncCheckBox.isChecked();
+        if (emailID.matches("") || password.matches("") || !isAgree) {
+            if(!isAgree) {
+                Toast.makeText(this, "Please accept Privacy Policy to continue", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(MainActivity.this, "Please input credentials", Toast.LENGTH_SHORT).show();
                 if (TextUtils.isEmpty(emailID)) {
@@ -296,19 +194,32 @@ public class MainActivity extends AppCompatActivity {
         }
         if (status != null && status.equals("loggedIn")) {
             loginStatus = true;
-//            Toast.makeText(context, "Already Signed in: " + email, Toast.LENGTH_SHORT).show();
         }
         return loginStatus;
     }
 
-    public String getUserType(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences("WCEVISITCOVID19", 0);
-        return preferences.getString("userType", null);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        boolean loginStatus = checkUserLoginStatus(getApplicationContext());
+        FirebaseUser currentUser = auth.getCurrentUser();
+
+        // check if signed in
+        if(currentUser != null && loginStatus)
+        {
+            // start AdminActivity
+            Intent intent = new Intent(MainActivity.this,AdminActivity.class);
+            progressBar.setVisibility(View.GONE);
+            startActivity(intent);
+            finish();
+        }
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        progressBar.setVisibility(View.GONE);
     }
 }
