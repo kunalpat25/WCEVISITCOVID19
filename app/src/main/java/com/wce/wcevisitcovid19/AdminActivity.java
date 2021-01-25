@@ -28,7 +28,7 @@ public class AdminActivity extends AppCompatActivity
     Button logoutBtn;
     ArrayAdapter<String> adapter;
     final Calendar myCalendar = Calendar.getInstance();
-    // 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
