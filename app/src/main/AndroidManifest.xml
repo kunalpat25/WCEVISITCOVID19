@@ -6,9 +6,7 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
@@ -38,12 +36,9 @@
         <activity android:name=".StatesListActivity" />
         <activity android:name=".DistrictUsersActivity" />
         <activity android:name=".UserDetailsActivity" />
-        <activity android:name=".QuarantinedStampedActivity" />
-        <activity android:name=".SeniorCitizensListActivity" />
         <activity android:name=".DistrictsListActivity" />
         <activity android:name=".SymptomsActivity" />
         <activity android:name=".SymptomaticUsersListActivity" />
-        <activity android:name=".NormalUserActivity" />
         <activity android:name=".AdminActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -53,7 +48,6 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".utils.AlarmReceiver"/>
     </application>
 
 </manifest>
