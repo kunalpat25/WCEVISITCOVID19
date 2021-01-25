@@ -15,7 +15,7 @@
     <string name="travelled_from_containment_zone">Travelled from containment zone</string>
     <string name="group_more_than_five">Group more than 5</string>
     <string name="without_mask">Without mask</string>
-    <string name="violating_covid19_guidelines">Violating COVID19 Guidelines</string>
+    <string name="violating_covid19_guidelines">violating COVID19 Guidelines</string>
     <string name="logout">Logout</string>
     <string name="districts">Districts</string>
     <string name="states">States</string>
