@@ -18,7 +18,6 @@ import com.wce.wcevisitcovid19.models.Visitor;
 import com.wce.wcevisitcovid19.utils.SearchUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filterable
 {
@@ -44,24 +43,24 @@ public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filter
         View rowView=inflater.inflate(R.layout.visitor_list_item,null,true);
 
         TextView nameTextView = rowView.findViewById(R.id.visitor_name_tv);
-        TextView placeTextView = rowView.findViewById(R.id.visitor_place_tv);
+        TextView extraInfoTextView = rowView.findViewById(R.id.extra_info_tv);
 
-        String id,name,locationOfVisit;
+        String id,name,extraInfo;
         try
         {
             name = filteredVisitorsList.get(position).getName();
-            locationOfVisit = filteredVisitorsList.get(position).getLocationOfVisit().toLowerCase();
+            extraInfo = filteredVisitorsList.get(position).getExtraInfo().toLowerCase();
             Log.i(TAG, "getView: getting name: "+name);
         }
         catch (Exception e)
         {
             name = visitorsList.get(position).getName();
-            locationOfVisit = visitorsList.get(position).getLocationOfVisit().toLowerCase();
+            extraInfo = visitorsList.get(position).getExtraInfo().toLowerCase();
         }
 
         nameTextView.setText(name);
-        placeTextView.setText(locationOfVisit);
-        Log.i(TAG, "getView: name & place: "+name+" "+locationOfVisit);
+        extraInfoTextView.setText(extraInfo);
+        Log.i(TAG, "getView: name & place: "+name+" "+extraInfo);
         return rowView;
     }
 

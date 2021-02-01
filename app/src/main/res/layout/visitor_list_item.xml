@@ -15,7 +15,7 @@
         />
 
     <TextView
-        android:id="@+id/visitor_place_tv"
+        android:id="@+id/extra_info_tv"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginStart="5dp"

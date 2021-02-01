@@ -41,9 +41,8 @@ public class VisitorsListActivity extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     VisitorsListAdapter visitorsListAdapter;
     String visitDate;
-    String outsiderId;
     TextView countTextView,infoTextView;
-    String count;
+    int totalCount, facultyCount, nonTeachingCount, outsiderCount, studentCount;
     SearchView searchView;
 
     @Override
@@ -108,8 +107,8 @@ public class VisitorsListActivity extends AppCompatActivity {
                         String outsiderId = postSnapshot.getKey();
                         outsiderIdList.add(outsiderId);
                     }
-                    count = String.valueOf(outsiderIdList.size());
-                    countTextView.setText(count);
+                    outsiderCount = outsiderIdList.size();
+                    updateCount();
                     DatabaseReference outsiderDatabaseReference;
                     for (String id : outsiderIdList)
                     {
@@ -134,7 +133,7 @@ public class VisitorsListActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot postSnapshot) {
                                 final String locationOfVisit = postSnapshot.getValue(String.class).toLowerCase();
-                                visitorsList.add(new Visitor(finalOutsiderId, outsiderName[0],locationOfVisit));
+                                visitorsList.add(new Visitor(finalOutsiderId, outsiderName[0],"Outsiders",locationOfVisit));
                                 visitorsListAdapter.notifyDataSetChanged();
                             }
 
@@ -146,9 +145,159 @@ public class VisitorsListActivity extends AppCompatActivity {
                     }
                 }
                 else {
-                    countTextView.setText("0");
-                    infoTextView.setVisibility(View.VISIBLE);
-                    Log.i(TAG, "onDataChange: No data found for date " + visitDate);
+                    outsiderCount = 0;
+                    updateCount();
+                    Log.i(TAG, "onDataChange: No outsider data found for date " + visitDate);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("error", error.getMessage());
+            }
+        });
+
+        // fetching faculty
+        final ArrayList<String> facultyIdList = new ArrayList<>();
+        DatabaseReference facultiesDatabaseReference;
+        facultiesDatabaseReference = database.getReference("Daily_assessment").child(fetchYear).child(fetchMonth).child(fetchDate).child("Temperature").child("Faculty");
+        facultiesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    infoTextView.setVisibility(View.GONE);
+                    Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        String outsiderId = postSnapshot.getKey();
+                        facultyIdList.add(outsiderId);
+                    }
+                    facultyCount = facultyIdList.size();
+                    updateCount();
+                    DatabaseReference selectedFacultyDatabaseReference;
+                    for (String id : facultyIdList)
+                    {
+                        final String finalFacultyId = id;
+                        final String[] facultyName = new String[1];
+                        selectedFacultyDatabaseReference = database.getReference("Faculty").child(finalFacultyId).child("Name");
+                        selectedFacultyDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot postSnapshot) {
+                                facultyName[0] = postSnapshot.getValue(String.class);
+                                visitorsList.add(new Visitor(finalFacultyId, facultyName[0],"Faculty","Faculty"));
+                                visitorsListAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("error", error.getMessage());
+                            }
+                        });
+                    }
+                }
+                else {
+                    facultyCount = 0;
+                    updateCount();
+                    Log.i(TAG, "onDataChange: No faculty data found for date " + visitDate);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("error", error.getMessage());
+            }
+        });
+
+        // fetching Non-teaching staff
+        final ArrayList<String> nonTeachingIdList = new ArrayList<>();
+        DatabaseReference nonTeachingDatabaseReference;
+        nonTeachingDatabaseReference = database.getReference("Daily_assessment").child(fetchYear).child(fetchMonth).child(fetchDate).child("Temperature").child("Non_teaching");
+        nonTeachingDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    infoTextView.setVisibility(View.GONE);
+                    Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        String nonTeachingID = postSnapshot.getKey();
+                        nonTeachingIdList.add(nonTeachingID);
+                    }
+                    nonTeachingCount = nonTeachingIdList.size();
+                    updateCount();
+                    DatabaseReference selectedNonTeachingDatabaseReference;
+                    for (String id : nonTeachingIdList)
+                    {
+                        final String finalNonTeachingId = id;
+                        final String[] nonTeachingName = new String[1];
+                        selectedNonTeachingDatabaseReference = database.getReference("Non_teaching").child(finalNonTeachingId).child("Name");
+                        selectedNonTeachingDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot postSnapshot) {
+                                nonTeachingName[0] = postSnapshot.getValue(String.class);
+                                visitorsList.add(new Visitor(finalNonTeachingId, nonTeachingName[0],"Non_teaching","Non Teaching staff"));
+                                visitorsListAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("error", error.getMessage());
+                            }
+                        });
+                    }
+                }
+                else {
+                    nonTeachingCount = 0;
+                    updateCount();
+                    Log.i(TAG, "onDataChange: No non teaching data found for date " + visitDate);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("error", error.getMessage());
+            }
+        });
+
+        // fetching Students
+        final ArrayList<String> studentsIdList = new ArrayList<>();
+        DatabaseReference studentDatabaseReference;
+        studentDatabaseReference = database.getReference("Daily_assessment").child(fetchYear).child(fetchMonth).child(fetchDate).child("Temperature").child("Students");
+        studentDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    infoTextView.setVisibility(View.GONE);
+                    Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        String studentID = postSnapshot.getKey();
+                        studentsIdList.add(studentID);
+                    }
+                    studentCount = studentsIdList.size();
+                    updateCount();
+                    DatabaseReference selectedStudentDatabaseReference;
+                    for (String id : studentsIdList)
+                    {
+                        final String finalStudentId = id;
+                        final String[] studentName = new String[1];
+                        selectedStudentDatabaseReference = database.getReference("Students").child(finalStudentId).child("Name");
+                        selectedStudentDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot postSnapshot) {
+                                studentName[0] = postSnapshot.getValue(String.class);
+                                visitorsList.add(new Visitor(finalStudentId, studentName[0],"Students","Student"));
+                                visitorsListAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("error", error.getMessage());
+                            }
+                        });
+                    }
+                }
+                else {
+                    studentCount = 0;
+                    updateCount();
+                    Log.i(TAG, "onDataChange: No student data found for date " + visitDate);
                 }
             }
 
@@ -210,6 +359,8 @@ public class VisitorsListActivity extends AppCompatActivity {
                 String fetchDate = du.extractDate();
                 String fetchMonth = du.extractMonth();
                 String fetchYear = du.extractYear();
+
+                // fetching outsider
                 DatabaseReference selectedOutsidersDatabaseReference;
                 selectedOutsidersDatabaseReference = database.getReference("Daily_assessment").child(fetchYear).child(fetchMonth).child(fetchDate).child("Temperature").child("Outsiders");
                 selectedOutsidersDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -217,14 +368,13 @@ public class VisitorsListActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             infoTextView.setVisibility(View.GONE);
+                            Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
                             for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                 String outsiderId = postSnapshot.getKey();
                                 outsiderIdList.add(outsiderId);
                             }
-
-                            count = String.valueOf(outsiderIdList.size());
-                            countTextView.setText(count);
-
+                            outsiderCount = outsiderIdList.size();
+                            updateCount();
                             DatabaseReference outsiderDatabaseReference;
                             for (String id : outsiderIdList)
                             {
@@ -248,8 +398,8 @@ public class VisitorsListActivity extends AppCompatActivity {
                                 outsiderLocationReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot postSnapshot) {
-                                        final String locationOfVisit = postSnapshot.getValue(String.class);
-                                        visitorsList.add(new Visitor(finalOutsiderId, outsiderName[0],locationOfVisit));
+                                        final String locationOfVisit = postSnapshot.getValue(String.class).toLowerCase();
+                                        visitorsList.add(new Visitor(finalOutsiderId, outsiderName[0],"Outsiders",locationOfVisit));
                                         visitorsListAdapter.notifyDataSetChanged();
                                     }
 
@@ -260,11 +410,160 @@ public class VisitorsListActivity extends AppCompatActivity {
                                 });
                             }
                         }
-                        else
-                        {
-                            countTextView.setText("0");
-                            infoTextView.setVisibility(View.VISIBLE);
-                            Log.i(TAG, "onDataChange: No visitor found for "+visitDate);
+                        else {
+                            outsiderCount = 0;
+                            updateCount();
+                            Log.i(TAG, "onDataChange: No outsider data found for date " + visitDate);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("error", error.getMessage());
+                    }
+                });
+
+                // fetching faculty
+                final ArrayList<String> facultyIdList = new ArrayList<>();
+                DatabaseReference facultiesDatabaseReference;
+                facultiesDatabaseReference = database.getReference("Daily_assessment").child(fetchYear).child(fetchMonth).child(fetchDate).child("Temperature").child("Faculty");
+                facultiesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            infoTextView.setVisibility(View.GONE);
+                            Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
+                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                String outsiderId = postSnapshot.getKey();
+                                facultyIdList.add(outsiderId);
+                            }
+                            facultyCount = facultyIdList.size();
+                            updateCount();
+                            DatabaseReference selectedFacultyDatabaseReference;
+                            for (String id : facultyIdList)
+                            {
+                                final String finalFacultyId = id;
+                                final String[] facultyName = new String[1];
+                                selectedFacultyDatabaseReference = database.getReference("Faculty").child(finalFacultyId).child("Name");
+                                selectedFacultyDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot postSnapshot) {
+                                        facultyName[0] = postSnapshot.getValue(String.class);
+                                        visitorsList.add(new Visitor(finalFacultyId, facultyName[0],"Faculty","Faculty"));
+                                        visitorsListAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.e("error", error.getMessage());
+                                    }
+                                });
+                            }
+                        }
+                        else {
+                            facultyCount = 0;
+                            updateCount();
+                            Log.i(TAG, "onDataChange: No faculty data found for date " + visitDate);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("error", error.getMessage());
+                    }
+                });
+
+                // fetching Non-teaching staff
+                final ArrayList<String> nonTeachingIdList = new ArrayList<>();
+                DatabaseReference nonTeachingDatabaseReference;
+                nonTeachingDatabaseReference = database.getReference("Daily_assessment").child(fetchYear).child(fetchMonth).child(fetchDate).child("Temperature").child("Non_teaching");
+                nonTeachingDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            infoTextView.setVisibility(View.GONE);
+                            Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
+                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                String nonTeachingID = postSnapshot.getKey();
+                                nonTeachingIdList.add(nonTeachingID);
+                            }
+                            nonTeachingCount = nonTeachingIdList.size();
+                            updateCount();
+                            DatabaseReference selectedNonTeachingDatabaseReference;
+                            for (String id : nonTeachingIdList)
+                            {
+                                final String finalNonTeachingId = id;
+                                final String[] nonTeachingName = new String[1];
+                                selectedNonTeachingDatabaseReference = database.getReference("Non_teaching").child(finalNonTeachingId).child("Name");
+                                selectedNonTeachingDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot postSnapshot) {
+                                        nonTeachingName[0] = postSnapshot.getValue(String.class);
+                                        visitorsList.add(new Visitor(finalNonTeachingId, nonTeachingName[0],"Non_teaching","Non Teaching staff"));
+                                        visitorsListAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.e("error", error.getMessage());
+                                    }
+                                });
+                            }
+                        }
+                        else {
+                            nonTeachingCount = 0;
+                            updateCount();
+                            Log.i(TAG, "onDataChange: No non teaching data found for date " + visitDate);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("error", error.getMessage());
+                    }
+                });
+
+                // fetching Students
+                final ArrayList<String> studentsIdList = new ArrayList<>();
+                DatabaseReference studentDatabaseReference;
+                studentDatabaseReference = database.getReference("Daily_assessment").child(fetchYear).child(fetchMonth).child(fetchDate).child("Temperature").child("Students");
+                studentDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            infoTextView.setVisibility(View.GONE);
+                            Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
+                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                String studentID = postSnapshot.getKey();
+                                studentsIdList.add(studentID);
+                            }
+                            studentCount = studentsIdList.size();
+                            updateCount();
+                            DatabaseReference selectedStudentDatabaseReference;
+                            for (String id : studentsIdList)
+                            {
+                                final String finalStudentId = id;
+                                final String[] studentName = new String[1];
+                                selectedStudentDatabaseReference = database.getReference("Students").child(finalStudentId).child("Name");
+                                selectedStudentDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot postSnapshot) {
+                                        studentName[0] = postSnapshot.getValue(String.class);
+                                        visitorsList.add(new Visitor(finalStudentId, studentName[0],"Students","Student"));
+                                        visitorsListAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.e("error", error.getMessage());
+                                    }
+                                });
+                            }
+                        }
+                        else {
+                            studentCount = 0;
+                            updateCount();
+                            Log.i(TAG, "onDataChange: No student data found for date " + visitDate);
                         }
                     }
 
@@ -281,18 +580,35 @@ public class VisitorsListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ArrayList<Visitor> filteredList = visitorsListAdapter.getFilteredVisitorsList();
-                String userName = filteredList.get(position).getName();
-                String userType = "Outsiders";
-                String userId = filteredList.get(position).getId();
+                String userName,userType,userId;
+                try {
+                    userName = filteredList.get(position).getName();
+                    userType = filteredList.get(position).getType();
+                    userId = filteredList.get(position).getId();
+                }
+                catch (Exception ex)
+                { // if a name is selected which is not available in filteredList, show it from visitorsList
+                    userName = visitorsList.get(position).getName();
+                    userType = visitorsList.get(position).getType();
+                    userId = visitorsList.get(position).getId();
+                }
                 Intent intent = new Intent(VisitorsListActivity.this,UserDetailsActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("userType",userType);
                 intent.putExtra("userId",userId);
                 startActivity(intent);
             }
-        }  );
+        });
 
         outsiderIdList.clear();
         visitorsList.clear();
+    }
+
+    public void updateCount()
+    {
+        totalCount = outsiderCount + facultyCount + nonTeachingCount + studentCount;
+        countTextView.setText(String.valueOf(totalCount));
+        if(totalCount == 0)
+            infoTextView.setVisibility(View.VISIBLE);
     }
 }
