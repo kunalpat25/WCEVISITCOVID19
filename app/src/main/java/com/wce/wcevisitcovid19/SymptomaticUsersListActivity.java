@@ -66,12 +66,12 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                     final String studentPRN = postSnapshot.getKey();
                     String status = postSnapshot.getValue(String.class);
                     if("yes".equalsIgnoreCase(status)) {
-                        DatabaseReference studentDatabaseReference = database.getReference("Students").child(studentPRN);
-                        studentDatabaseReference.addValueEventListener(new ValueEventListener() {
+                        DatabaseReference studentDatabaseReference = database.getReference("Students").child(studentPRN).child("Name");
+                        studentDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                String studentName = snapshot.child("Name").getValue(String.class);
+                                String studentName = snapshot.getValue(String.class);
                                 userIdList.add(studentPRN);
                                 usersList.add(studentName);
                                 userTypeList.add("Students");
@@ -109,12 +109,12 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                     final String empId = postSnapshot.getKey();
                     String status = postSnapshot.getValue(String.class);
                     if("yes".equalsIgnoreCase(status)) {
-                        DatabaseReference facultyDatabaseReference = database.getReference("Faculty").child(empId);
-                        facultyDatabaseReference.addValueEventListener(new ValueEventListener() {
+                        DatabaseReference facultyDatabaseReference = database.getReference("Faculty").child(empId).child("Name");
+                        facultyDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                String facultyName = snapshot.child("Name").getValue(String.class);
+                                String facultyName = snapshot.getValue(String.class);
                                 userIdList.add(empId);
                                 usersList.add(facultyName);
                                 userTypeList.add("Faculty");
@@ -153,12 +153,12 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                     final String empId = postSnapshot.getKey();
                     String status = postSnapshot.getValue(String.class);
                     if("yes".equalsIgnoreCase(status)) {
-                        DatabaseReference nonTeachingDatabaseReference = database.getReference("Non_teaching").child(empId);
-                        nonTeachingDatabaseReference.addValueEventListener(new ValueEventListener() {
+                        DatabaseReference nonTeachingDatabaseReference = database.getReference("Non_teaching").child(empId).child("Name");
+                        nonTeachingDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                String nonTeachingStaffName = snapshot.child("Name").getValue(String.class);
+                                String nonTeachingStaffName = snapshot.getValue(String.class);
                                 userIdList.add(empId);
                                 usersList.add(nonTeachingStaffName);
                                 userTypeList.add("Non_teaching");
@@ -198,11 +198,11 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                     String status = postSnapshot.getValue(String.class);
 
                     if("yes".equalsIgnoreCase(status)) {
-                        DatabaseReference outsiderDatabaseReference = database.getReference("Outsiders").child(visitorId);
-                        outsiderDatabaseReference.addValueEventListener(new ValueEventListener() {
+                        DatabaseReference outsiderDatabaseReference = database.getReference("Outsiders").child(visitorId).child("Name");
+                        outsiderDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                String outsiderName = snapshot.child("Name").getValue(String.class);
+                                String outsiderName = snapshot.getValue(String.class);
                                 userIdList.add(visitorId);
                                 usersList.add(outsiderName);
                                 userTypeList.add("Outsiders");
