@@ -37,7 +37,6 @@ public class DistrictsListAdapter extends ArrayAdapter<String> {
         TextView districtTextView=(TextView) rowView.findViewById(R.id.list_item_text_view);
 
         districtTextView.setText(districts.get(position));
-        Log.i(TAG, "getView: District: "+districts.get(position));
         return rowView;
     }
 }

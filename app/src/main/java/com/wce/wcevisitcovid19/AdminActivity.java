@@ -40,8 +40,8 @@ public class AdminActivity extends AppCompatActivity
         menuList.add(getString(R.string.district_wise_list));
         menuList.add(getString(R.string.state_wise_list));
         menuList.add("Visitors' List");
-        menuList.add(getString(R.string.without_mask));
-        menuList.add(getString(R.string.violating_covid19_guidelines));
+//        menuList.add(getString(R.string.without_mask));
+//        menuList.add(getString(R.string.violating_covid19_guidelines));
 
         adapter= new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
@@ -124,16 +124,16 @@ public class AdminActivity extends AppCompatActivity
                         intent = new Intent(AdminActivity.this,VisitorsListActivity.class);
                         startActivity(intent);
                         break;
-                    case 4:
-                        activity = "without_mask";
-                        intent = new Intent(AdminActivity.this,WithoutMaskActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 5:
-                        activity = "violating_guidelines";
-                        intent = new Intent(AdminActivity.this,ViolatingGuidelinesActivity.class);
-                        startActivity(intent);
-                        break;
+//                    case 4:
+//                        activity = "without_mask";
+//                        intent = new Intent(AdminActivity.this,WithoutMaskActivity.class);
+//                        startActivity(intent);
+//                        break;
+//                    case 5:
+//                        activity = "violating_guidelines";
+//                        intent = new Intent(AdminActivity.this,ViolatingGuidelinesActivity.class);
+//                        startActivity(intent);
+//                        break;
                 }
             }
         });

@@ -94,6 +94,8 @@ public class VisitorsListActivity extends AppCompatActivity {
         String fetchDate = du.extractDate();
         String fetchMonth = du.extractMonth();
         String fetchYear = du.extractYear();
+
+        // fetching outsider
         DatabaseReference selectedOutsidersDatabaseReference;
         selectedOutsidersDatabaseReference = database.getReference("Daily_assessment").child(fetchYear).child(fetchMonth).child(fetchDate).child("Temperature").child("Outsiders");
         selectedOutsidersDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -159,7 +161,6 @@ public class VisitorsListActivity extends AppCompatActivity {
         final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                // TODO Auto-generated method stub
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, month);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -179,7 +180,6 @@ public class VisitorsListActivity extends AppCompatActivity {
         editVisitDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 new DatePickerDialog(VisitorsListActivity.this, dateSetListener, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
