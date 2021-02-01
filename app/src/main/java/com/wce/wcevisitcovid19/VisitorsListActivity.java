@@ -102,7 +102,6 @@ public class VisitorsListActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     infoTextView.setVisibility(View.GONE);
-                    Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         String outsiderId = postSnapshot.getKey();
                         outsiderIdList.add(outsiderId);
@@ -125,7 +124,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("error", error.getMessage());
                             }
                         });
                         DatabaseReference outsiderLocationReference = database.getReference("Outsiders").child(finalOutsiderId).child("Location of visit");
@@ -139,7 +137,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("error", error.getMessage());
                             }
                         });
                     }
@@ -147,13 +144,11 @@ public class VisitorsListActivity extends AppCompatActivity {
                 else {
                     outsiderCount = 0;
                     updateCount();
-                    Log.i(TAG, "onDataChange: No outsider data found for date " + visitDate);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -166,7 +161,6 @@ public class VisitorsListActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     infoTextView.setVisibility(View.GONE);
-                    Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         String outsiderId = postSnapshot.getKey();
                         facultyIdList.add(outsiderId);
@@ -189,7 +183,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("error", error.getMessage());
                             }
                         });
                     }
@@ -197,13 +190,11 @@ public class VisitorsListActivity extends AppCompatActivity {
                 else {
                     facultyCount = 0;
                     updateCount();
-                    Log.i(TAG, "onDataChange: No faculty data found for date " + visitDate);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -216,7 +207,6 @@ public class VisitorsListActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     infoTextView.setVisibility(View.GONE);
-                    Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         String nonTeachingID = postSnapshot.getKey();
                         nonTeachingIdList.add(nonTeachingID);
@@ -239,7 +229,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("error", error.getMessage());
                             }
                         });
                     }
@@ -247,13 +236,11 @@ public class VisitorsListActivity extends AppCompatActivity {
                 else {
                     nonTeachingCount = 0;
                     updateCount();
-                    Log.i(TAG, "onDataChange: No non teaching data found for date " + visitDate);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -266,7 +253,6 @@ public class VisitorsListActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     infoTextView.setVisibility(View.GONE);
-                    Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         String studentID = postSnapshot.getKey();
                         studentsIdList.add(studentID);
@@ -289,7 +275,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("error", error.getMessage());
                             }
                         });
                     }
@@ -297,13 +282,11 @@ public class VisitorsListActivity extends AppCompatActivity {
                 else {
                     studentCount = 0;
                     updateCount();
-                    Log.i(TAG, "onDataChange: No student data found for date " + visitDate);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -368,7 +351,6 @@ public class VisitorsListActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             infoTextView.setVisibility(View.GONE);
-                            Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
                             for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                 String outsiderId = postSnapshot.getKey();
                                 outsiderIdList.add(outsiderId);
@@ -391,7 +373,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-                                        Log.e("error", error.getMessage());
                                     }
                                 });
                                 DatabaseReference outsiderLocationReference = database.getReference("Outsiders").child(finalOutsiderId).child("Location of visit");
@@ -405,7 +386,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-                                        Log.e("error", error.getMessage());
                                     }
                                 });
                             }
@@ -413,13 +393,11 @@ public class VisitorsListActivity extends AppCompatActivity {
                         else {
                             outsiderCount = 0;
                             updateCount();
-                            Log.i(TAG, "onDataChange: No outsider data found for date " + visitDate);
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("error", error.getMessage());
                     }
                 });
 
@@ -432,7 +410,6 @@ public class VisitorsListActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             infoTextView.setVisibility(View.GONE);
-                            Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
                             for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                 String outsiderId = postSnapshot.getKey();
                                 facultyIdList.add(outsiderId);
@@ -455,7 +432,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-                                        Log.e("error", error.getMessage());
                                     }
                                 });
                             }
@@ -463,13 +439,11 @@ public class VisitorsListActivity extends AppCompatActivity {
                         else {
                             facultyCount = 0;
                             updateCount();
-                            Log.i(TAG, "onDataChange: No faculty data found for date " + visitDate);
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("error", error.getMessage());
                     }
                 });
 
@@ -482,7 +456,6 @@ public class VisitorsListActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             infoTextView.setVisibility(View.GONE);
-                            Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
                             for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                 String nonTeachingID = postSnapshot.getKey();
                                 nonTeachingIdList.add(nonTeachingID);
@@ -505,7 +478,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-                                        Log.e("error", error.getMessage());
                                     }
                                 });
                             }
@@ -513,13 +485,11 @@ public class VisitorsListActivity extends AppCompatActivity {
                         else {
                             nonTeachingCount = 0;
                             updateCount();
-                            Log.i(TAG, "onDataChange: No non teaching data found for date " + visitDate);
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("error", error.getMessage());
                     }
                 });
 
@@ -532,7 +502,6 @@ public class VisitorsListActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             infoTextView.setVisibility(View.GONE);
-                            Log.i(TAG, "onDataChange: Found dataSnapshot for "+ visitDate);
                             for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                 String studentID = postSnapshot.getKey();
                                 studentsIdList.add(studentID);
@@ -555,7 +524,6 @@ public class VisitorsListActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-                                        Log.e("error", error.getMessage());
                                     }
                                 });
                             }
@@ -563,13 +531,11 @@ public class VisitorsListActivity extends AppCompatActivity {
                         else {
                             studentCount = 0;
                             updateCount();
-                            Log.i(TAG, "onDataChange: No student data found for date " + visitDate);
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("error", error.getMessage());
                     }
                 });
 

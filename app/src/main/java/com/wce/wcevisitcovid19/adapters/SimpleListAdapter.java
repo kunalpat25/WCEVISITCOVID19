@@ -2,7 +2,6 @@ package com.wce.wcevisitcovid19.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,6 @@ public class SimpleListAdapter extends ArrayAdapter<String> {
         TextView studentTextView=(TextView) rowView.findViewById(R.id.list_item_text_view);
 
         studentTextView.setText(users.get(position));
-        Log.i(TAG, "getView: User: "+users.get(position));
         return rowView;
     }
 }

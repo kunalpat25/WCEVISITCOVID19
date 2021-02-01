@@ -1,7 +1,6 @@
 package com.wce.wcevisitcovid19.adapters;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +49,6 @@ public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filter
         {
             name = filteredVisitorsList.get(position).getName();
             extraInfo = filteredVisitorsList.get(position).getExtraInfo().toLowerCase();
-            Log.i(TAG, "getView: getting name: "+name);
         }
         catch (Exception e)
         {
@@ -60,7 +58,6 @@ public class VisitorsListAdapter extends ArrayAdapter<Visitor> implements Filter
 
         nameTextView.setText(name);
         extraInfoTextView.setText(extraInfo);
-        Log.i(TAG, "getView: name & place: "+name+" "+extraInfo);
         return rowView;
     }
 

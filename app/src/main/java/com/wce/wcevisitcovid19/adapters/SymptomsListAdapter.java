@@ -3,7 +3,6 @@ package com.wce.wcevisitcovid19.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,6 @@ public class SymptomsListAdapter extends ArrayAdapter<String> {
         TextView symptomTextView=(TextView) rowView.findViewById(R.id.list_item_text_view);
 
         symptomTextView.setText(symptoms.get(position));
-        Log.i(TAG, "getView: Symptom: "+symptoms.get(position));
         return rowView;
     }
 }

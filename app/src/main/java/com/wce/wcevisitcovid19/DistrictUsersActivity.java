@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -28,7 +27,6 @@ public class DistrictUsersActivity extends AppCompatActivity
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference dbRef = database.getReference();
-    TextView districtTextView ;
 
     ArrayList<String> usersList = new ArrayList<>();
     ArrayList<String> userTypeList = new ArrayList<>();
@@ -57,7 +55,6 @@ public class DistrictUsersActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         districtName = intent.getStringExtra("district");
-        Log.i(TAG, "onCreate: districtName from intent: "+districtName);
         getSupportActionBar().setTitle(districtName);
 
         //trial to reduce data consumption, if not worked, remove
@@ -73,19 +70,16 @@ public class DistrictUsersActivity extends AppCompatActivity
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             username = snapshot.getValue(String.class);
-                            Log.i(TAG, "onDataChange: StudentName: "+username);
                             usersList.add(username);
                             userTypeList.add("Students");
                             userIdList.add(userId);
                             count = usersList.size();
                             countTextView.setText(String.valueOf(count));
-                            Log.i(TAG, "onDataChange: Student in district: " +districtName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("error", error.getMessage());
                         }
                     });
                 }
@@ -93,7 +87,6 @@ public class DistrictUsersActivity extends AppCompatActivity
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -111,19 +104,16 @@ public class DistrictUsersActivity extends AppCompatActivity
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             username = snapshot.getValue(String.class);
-                            Log.i(TAG, "onDataChange: facultyName: "+username);
                             usersList.add(username);
                             userTypeList.add("Faculty");
                             userIdList.add(userId);
                             count = usersList.size();
                             countTextView.setText(String.valueOf(count));
-                            Log.i(TAG, "onDataChange: Faculty in district: " +districtName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("error", error.getMessage());
                         }
                     });
                 }
@@ -131,7 +121,6 @@ public class DistrictUsersActivity extends AppCompatActivity
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -149,19 +138,16 @@ public class DistrictUsersActivity extends AppCompatActivity
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             username = snapshot.getValue(String.class);
-                            Log.i(TAG, "onDataChange: NonTeaching Name: "+username);
                             usersList.add(username);
                             userTypeList.add("Non_teaching");
                             userIdList.add(userId);
                             count = usersList.size();
                             countTextView.setText(String.valueOf(count));
-                            Log.i(TAG, "onDataChange: NonTeaching Staff in district: " +districtName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("error", error.getMessage());
                         }
                     });
 
@@ -170,7 +156,6 @@ public class DistrictUsersActivity extends AppCompatActivity
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -188,19 +173,16 @@ public class DistrictUsersActivity extends AppCompatActivity
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             username = snapshot.getValue(String.class);
-                            Log.i(TAG, "onDataChange: OutsiderName: "+username);
                             usersList.add(username);
                             userTypeList.add("Outsiders");
                             userIdList.add(userId);
                             count = usersList.size();
                             countTextView.setText(String.valueOf(count));
-                            Log.i(TAG, "onDataChange: Outsider in district: " +districtName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("error", error.getMessage());
                         }
                     });
 
@@ -209,7 +191,6 @@ public class DistrictUsersActivity extends AppCompatActivity
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 

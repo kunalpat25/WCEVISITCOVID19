@@ -171,7 +171,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                 quarantinedLayout.setVisibility(View.VISIBLE);
                 locationLayout.setVisibility(View.VISIBLE);
 
-                Log.i(TAG, "onCreate: Student id: "+userId);
                 DatabaseReference studentDatabaseReference = dbRef.child("Students").child(userId);
                 studentDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -183,7 +182,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                         district = studentSnapshot.child("District").getValue(String.class);
                         state = studentSnapshot.child("State").getValue(String.class);
                         PRN = studentSnapshot.child("PRN").getValue(String.class);
-                        Log.i(TAG, "onDataChange: Found Student: "+studentName+" "+PRN);
                         address = studentSnapshot.child("Address").getValue(String.class);
                         studentClass = studentSnapshot.child("Class").getValue(String.class);
                         isQuarantined = studentSnapshot.child("Quarantined in lockdown").getValue(String.class);
@@ -209,7 +207,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("error", error.getMessage());
                     }
                 });
                 break;
@@ -270,7 +267,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("error", error.getMessage());
                     }
                 });
                 break;
@@ -328,7 +324,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("error", error.getMessage());
                     }
                 });
                 break;
@@ -392,12 +387,7 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
                         meetingWith = dataSnapshot.child("Meeting with").getValue(String.class);
                         inTime = dataSnapshot.child("In Time").getValue(String.class);
                         outTime = dataSnapshot.child("Out Time").getValue(String.class);
-                        //showing user's image
-//                        String imgUri = dataSnapshot.child("Image data").getValue(String.class);
-//                        Log.i(TAG, "onDataChange: imageURI: "+imgUri);
-//                                byte[] decodedString = Base64.decode(imgUri, Base64.DEFAULT);
-//                                Bitmap bitMap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//                                userTypeImageView.setImageBitmap(bitMap);
+
 
                         contactTextView.setText(contact);
                         districtTextView.setText(district);
@@ -418,7 +408,6 @@ public class UserDetailsActivity extends AppCompatActivity implements LocationLi
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("error", error.getMessage());
                     }
                 });
 

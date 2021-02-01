@@ -69,19 +69,16 @@ public class StateUsersActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             username = snapshot.getValue(String.class);
-                            Log.i(TAG, "onDataChange: StudentName: "+username);
                             usersList.add(username);
                             userTypeList.add("Students");
                             userIdList.add(studentPRN);
                             count = usersList.size();
                             countTextView.setText(String.valueOf(count));
-                            Log.i(TAG, "onDataChange: Student in state: " +stateName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("error", error.getMessage());
                         }
                     });
 
@@ -90,7 +87,6 @@ public class StateUsersActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -108,19 +104,16 @@ public class StateUsersActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             username = snapshot.getValue(String.class);
-                            Log.i(TAG, "onDataChange: facultyName: "+username);
                             usersList.add(username);
                             userTypeList.add("Faculty");
                             userIdList.add(userId);
                             count = usersList.size();
                             countTextView.setText(String.valueOf(count));
-                            Log.i(TAG, "onDataChange: Faculty in state: " +stateName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("error", error.getMessage());
                         }
                     });
 
@@ -129,7 +122,6 @@ public class StateUsersActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -147,19 +139,16 @@ public class StateUsersActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             username = snapshot.getValue(String.class);
-                            Log.i(TAG, "onDataChange: NonTeaching Name: "+username);
                             usersList.add(username);
                             userTypeList.add("Non_teaching");
                             userIdList.add(userId);
                             count = usersList.size();
                             countTextView.setText(String.valueOf(count));
-                            Log.i(TAG, "onDataChange: NonTeaching Staff in state: " +stateName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("error", error.getMessage());
                         }
                     });
 
@@ -168,7 +157,6 @@ public class StateUsersActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -186,19 +174,16 @@ public class StateUsersActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             username = snapshot.getValue(String.class);
-                            Log.i(TAG, "onDataChange: OutsiderName: "+username);
                             usersList.add(username);
                             userTypeList.add("Outsiders");
                             userIdList.add(userId);
                             count = usersList.size();
                             countTextView.setText(String.valueOf(count));
-                            Log.i(TAG, "onDataChange: Outsider in state: " +stateName +":"+ username);
                             userListAdapter.notifyDataSetChanged();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("error", error.getMessage());
                         }
                     });
 
@@ -207,7 +192,6 @@ public class StateUsersActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 

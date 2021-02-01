@@ -2,7 +2,6 @@ package com.wce.wcevisitcovid19.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,6 @@ public class StatesListAdapter extends ArrayAdapter<String> {
         TextView stateTextView=(TextView) rowView.findViewById(R.id.list_item_text_view);
 
         stateTextView.setText(states.get(position));
-        Log.i(TAG, "getView: State: "+states.get(position));
         return rowView;
     }
 }

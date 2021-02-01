@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -50,14 +49,12 @@ public class DistrictsListActivity extends AppCompatActivity {
                     String districtName = postSnapshot.getKey();
 
                         districtsList.add(districtName);
-                        Log.i(TAG, "onDataChange: District: " + districtName);
                         districtListAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -69,7 +66,6 @@ public class DistrictsListActivity extends AppCompatActivity {
                 String districtName = districtsList.get(position);
                 Intent intent = new Intent(DistrictsListActivity.this,DistrictUsersActivity.class);
                 intent.putExtra("district",districtName);
-                Log.i(TAG, "onItemClick: district name : "+districtName);
                 startActivity(intent);
             }
         });

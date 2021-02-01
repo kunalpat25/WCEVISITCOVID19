@@ -6,7 +6,6 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -106,7 +105,6 @@ public class AdminActivity extends AppCompatActivity
                         intent.putExtra("month",month);
                         intent.putExtra("date",date);
 
-                        Log.i(TAG, "onCreate: Today's date:"+date+" "+month+" "+year);
                         startActivity(intent);
                         break;
                     case 1:

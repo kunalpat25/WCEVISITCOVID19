@@ -77,13 +77,11 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                                 userTypeList.add("Students");
                                 count = usersList.size();
                                 countTextView.setText(String.valueOf(count));
-                                Log.i(TAG, "onDataChange: Student having symptom: " + studentName);
                                 userListAdapter.notifyDataSetChanged();
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("error", error.getMessage());
                             }
                         });
                     }
@@ -92,7 +90,6 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -120,13 +117,11 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                                 userTypeList.add("Faculty");
                                 count = usersList.size();
                                 countTextView.setText(String.valueOf(count));
-                                Log.i(TAG, "onDataChange: Faculty having symptom: " + facultyName);
                                 userListAdapter.notifyDataSetChanged();
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("error", error.getMessage());
                             }
                         });
 
@@ -136,7 +131,6 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -164,14 +158,12 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                                 userTypeList.add("Non_teaching");
                                 count = usersList.size();
                                 countTextView.setText(String.valueOf(count));
-                                Log.i(TAG, "onDataChange: Non Teaching Staff having symptom: " + nonTeachingStaffName);
 
                                 userListAdapter.notifyDataSetChanged();
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("error", error.getMessage());
                             }
                         });
                     }
@@ -180,7 +172,6 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
@@ -208,13 +199,11 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
                                 userTypeList.add("Outsiders");
                                 count = usersList.size();
                                 countTextView.setText(String.valueOf(count));
-                                Log.i(TAG, "onDataChange: Outsider having symptom: " + outsiderName);
                                 userListAdapter.notifyDataSetChanged();
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("error", error.getMessage());
                             }
                         });
 
@@ -224,7 +213,6 @@ public class SymptomaticUsersListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 

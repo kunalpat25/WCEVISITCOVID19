@@ -56,14 +56,12 @@ public class StatesListActivity extends AppCompatActivity {
                     String stateName = postSnapshot.getKey();
 
                     statesList.add(stateName);
-                    Log.i(TAG, "onDataChange: State: " + stateName);
                     statesListAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("error", error.getMessage());
             }
         });
 
